@@ -1,0 +1,2383 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>深度三千四十一メートル ｜ ドームΩ越冬記録</title>
+<meta name="description" content="南極・東南極高原の深層氷床掘削基地を舞台にした群像劇。全13章の本編と、地図・断面図・人物相関図・年表を収めた設定資料。">
+<meta property="og:title" content="深度三千四十一メートル">
+<meta property="og:description" content="三十年かけて開けた穴を、十一日かけて塞ぐ話。南極・ドームΩ基地の越冬記録。">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Zen+Old+Mincho:wght@400;600;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   深度三千四十一メートル
+   design tokens
+   氷床コアの色域から。フィルン白 / 浅層氷 / 深層氷 / 掘削液の琥珀
+   ============================================================ */
+:root{
+  --firn:#E9EFF5;
+  --ice:#5FB6D4;
+  --ice-deep:#1E6F92;
+  --abyss:#0C1220;
+  --night:#101A2C;
+  --night-2:#16233C;
+  --fluid:#D9A24A;      /* ケロシン系掘削液 */
+  --lake:#2E8C8C;
+
+  --f-display:"Shippori Mincho B1", serif;
+  --f-body:"Zen Old Mincho", serif;
+  --f-ui:"Zen Kaku Gothic New", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, monospace;
+
+  --rail-w:88px;
+  --pad:clamp(20px, 5vw, 64px);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *{animation:none !important; transition:none !important}
+}
+body{
+  margin:0;
+  background:var(--night);
+  color:var(--firn);
+  font-family:var(--f-body);
+  font-size:17px;
+  line-height:2.0;
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:"palt" 1;
+}
+a{color:inherit}
+
+/* ---------- 深度計（このページの署名要素） ---------- */
+.rail{
+  position:fixed; left:0; top:0; bottom:0; width:var(--rail-w);
+  z-index:50;
+  background:linear-gradient(180deg, #0A1020 0%, #0C1424 100%);
+  border-right:1px solid rgba(120,165,210,.18);
+  display:flex; flex-direction:column; align-items:center;
+  padding:18px 0 20px;
+  font-family:var(--f-mono);
+}
+.rail-cap{
+  font-size:9px; letter-spacing:.22em; color:#5E799B;
+  text-align:center; line-height:1.5;
+}
+.rail-read{
+  font-size:20px; font-weight:600; color:var(--firn);
+  letter-spacing:.02em; margin-top:2px;
+  font-variant-numeric:tabular-nums;
+}
+.rail-unit{font-size:10px; color:#5E799B; letter-spacing:.2em; margin-top:-2px}
+.rail-year{margin-top:11px; padding-top:10px; width:74%; text-align:center; border-top:1px solid rgba(120,165,210,.18)}
+.rail-year .yl{font-size:8.5px; color:#5E799B; letter-spacing:.2em; display:block; margin-bottom:3px}
+.rail-year .yv{font-size:12.5px; font-weight:600; color:var(--fluid); font-variant-numeric:tabular-nums}
+.rail-scale{
+  position:relative; flex:1; width:100%; margin-top:12px;
+}
+.rail-line{
+  position:absolute; left:50%; top:0; bottom:0; width:2px; transform:translateX(-50%);
+  background:linear-gradient(180deg,#DCE6F0 0%, #7EC3DC 18%, #2E7EA0 55%, #16506B 84%, var(--fluid) 100%);
+  opacity:.34;
+}
+.rail-fill{
+  position:absolute; left:50%; top:0; width:2px; transform:translateX(-50%);
+  background:linear-gradient(180deg,#DCE6F0 0%, #7EC3DC 18%, #2E7EA0 55%, #16506B 84%, var(--fluid) 100%);
+  height:0;
+}
+.rail-dot{
+  position:absolute; left:50%; width:9px; height:9px; margin-left:-4.5px; margin-top:-4.5px;
+  border-radius:50%; background:var(--firn); box-shadow:0 0 0 3px rgba(233,239,245,.18);
+  top:0;
+}
+.tick{
+  position:absolute; left:0; width:100%;
+  display:block; background:none; border:0; padding:0; cursor:pointer;
+  color:#7C93B4; text-align:left;
+}
+.tick i{
+  position:absolute; left:calc(50% + 6px); top:-1px; width:12px; height:1px;
+  background:rgba(150,185,220,.45); display:block;
+}
+.tick b{
+  position:absolute; left:calc(50% + 22px); top:-8px;
+  font-size:9px; font-weight:500; letter-spacing:.04em; white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.tick:hover b, .tick:focus-visible b{color:var(--firn)}
+.tick:focus-visible{outline:1px solid var(--ice); outline-offset:2px}
+
+.railbar{display:none}
+
+@media (max-width:900px){
+  .rail{display:none}
+  .railbar{
+    display:flex; position:fixed; left:0; right:0; bottom:0; z-index:50;
+    align-items:center; gap:10px; padding:8px 14px calc(8px + env(safe-area-inset-bottom));
+    background:rgba(10,16,32,.94); backdrop-filter:blur(8px);
+    border-top:1px solid rgba(120,165,210,.2);
+    font-family:var(--f-mono); font-size:12px; color:#8FA7C4;
+  }
+  .railbar .bx{flex:1; height:2px; background:rgba(120,165,210,.22); position:relative}
+  .railbar .bf{position:absolute;left:0;top:0;height:2px;width:0;background:var(--ice)}
+  .railbar .rd{color:var(--firn); font-weight:600; font-variant-numeric:tabular-nums}
+}
+
+/* ---------- レイアウト ---------- */
+main{margin-left:var(--rail-w)}
+@media (max-width:900px){ main{margin-left:0; padding-bottom:52px} }
+
+.mv{background:var(--bg); color:var(--ink); padding:var(--pad) var(--pad) calc(var(--pad) * 1.4)}
+.mv-night{
+  --bg:var(--night); --ink:var(--firn); --dim:#8CA1C0;
+  --line:rgba(146,178,220,.20); --panel:rgba(255,255,255,.030);
+  --accent:var(--ice);
+}
+.mv-day{
+  --bg:#E7ECF1; --ink:#0F1826; --dim:#56637A;
+  --line:rgba(15,24,38,.16); --panel:#FFFFFF;
+  --accent:var(--ice-deep);
+}
+.mv-void{--bg:#05080F; --ink:#C3D2E4; --dim:#55688A; --line:rgba(120,160,205,.16); --panel:rgba(255,255,255,.022); --accent:#7FB6D0}
+.mv-fluid{--bg:#0E0A06; --ink:#E6DCCB; --dim:#8A7A5E; --line:rgba(217,162,74,.22); --panel:rgba(217,162,74,.05); --accent:var(--fluid)}
+.mv-tar{--bg:#070502; --ink:#A9997F; --dim:#6A5C46; --line:rgba(217,162,74,.14); --panel:rgba(217,162,74,.04); --accent:#9B7530}
+
+/* 間奏：時空を跨ぐ節 */
+.inter{padding:clamp(70px,12vw,150px) var(--pad); text-align:center}
+.inter-when{font-family:var(--f-mono); font-size:11px; letter-spacing:.4em; color:var(--accent); margin:0 0 8px}
+.inter-where{font-family:var(--f-ui); font-size:12px; letter-spacing:.2em; color:var(--dim); margin:0 0 clamp(34px,6vw,60px)}
+.refrain{font-family:var(--f-display); font-weight:500; font-size:clamp(19px,3.2vw,31px); line-height:2.1; letter-spacing:.1em; margin:0 auto clamp(34px,6vw,58px); max-width:24em}
+.refrain em{font-style:normal; font-size:.6em; letter-spacing:.34em; color:var(--dim); display:block}
+.inter-body{max-width:34em; margin:0 auto; text-align:left; font-size:16px; line-height:2.05}
+.inter-body p{margin:0 0 1.5em}
+.chap-line{font-family:var(--f-display); font-size:clamp(15px,2vw,18px); letter-spacing:.24em; color:var(--accent); margin:16px 0 0; padding-top:14px; border-top:1px solid var(--line)}
+.wrap{max-width:880px; margin:0 auto}
+.wide{max-width:1080px; margin:0 auto}
+
+/* ---------- ヒーロー ---------- */
+.hero{
+  --bg:var(--abyss); --ink:var(--firn); --dim:#7E95B6;
+  --line:rgba(146,178,220,.20); --accent:var(--ice);
+  min-height:100svh; display:flex; flex-direction:column; justify-content:center;
+  padding:var(--pad); position:relative; overflow:hidden;
+  background:
+    radial-gradient(120% 80% at 78% 8%, rgba(95,182,212,.13), transparent 58%),
+    radial-gradient(90% 60% at 12% 96%, rgba(217,162,74,.08), transparent 60%),
+    var(--abyss);
+}
+.hero-poem{
+  font-family:var(--f-display); font-weight:500;
+  font-size:clamp(21px, 4.1vw, 40px); line-height:1.95;
+  letter-spacing:.06em; margin:0 0 clamp(28px,5vw,52px);
+}
+.hero-poem span{display:block; opacity:0; animation:rise .95s cubic-bezier(.2,.7,.3,1) forwards}
+.hero-poem span:nth-child(1){animation-delay:.10s}
+.hero-poem span:nth-child(2){animation-delay:.55s}
+.hero-poem span:nth-child(3){animation-delay:1.00s}
+.hero-poem span:nth-child(4){animation-delay:1.45s; font-size:.62em; opacity:0; color:var(--dim); letter-spacing:.3em}
+.hero-poem span:nth-child(5){animation-delay:1.70s}
+@keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+@media (prefers-reduced-motion: reduce){ .hero-poem span{opacity:1 !important; transform:none} }
+
+.hero-title{
+  font-family:var(--f-display); font-weight:800;
+  font-size:clamp(30px, 6.4vw, 66px); line-height:1.2; letter-spacing:.02em;
+  margin:0 0 14px;
+}
+.hero-sub{font-family:var(--f-ui); font-size:14px; color:var(--dim); letter-spacing:.1em; margin:0 0 34px}
+.hero-meta{
+  display:flex; flex-wrap:wrap; gap:0 30px; row-gap:10px;
+  font-family:var(--f-mono); font-size:11.5px; letter-spacing:.06em; color:var(--dim);
+  border-top:1px solid rgba(146,178,220,.20); padding-top:18px; max-width:760px;
+}
+.hero-meta b{color:var(--firn); font-weight:500}
+
+/* ---------- 汎用パーツ ---------- */
+.eyebrow{
+  font-family:var(--f-mono); font-size:10.5px; letter-spacing:.3em;
+  color:var(--accent); margin:0 0 12px; text-transform:uppercase;
+}
+.mv h2{
+  font-family:var(--f-display); font-weight:700;
+  font-size:clamp(23px,3.4vw,34px); line-height:1.4; letter-spacing:.04em;
+  margin:0 0 8px;
+}
+.mv h3{
+  font-family:var(--f-display); font-weight:700;
+  font-size:clamp(18px,2.2vw,22px); letter-spacing:.05em; margin:56px 0 14px;
+  padding-bottom:8px; border-bottom:1px solid var(--line);
+}
+.lede{color:var(--dim); font-size:15px; line-height:1.95; margin:0 0 40px; max-width:70ch}
+.mv p{margin:0 0 1.5em}
+
+.sep{
+  border:0; height:1px; background:var(--line); margin:0;
+}
+.divider{
+  display:flex; align-items:center; gap:16px; margin:0;
+  font-family:var(--f-mono); font-size:10px; letter-spacing:.3em; color:var(--dim);
+}
+.divider::before,.divider::after{content:""; flex:1; height:1px; background:var(--line)}
+
+/* ---------- 図版 ---------- */
+.fig{
+  background:var(--panel); border:1px solid var(--line);
+  padding:clamp(14px,2.5vw,26px); margin:0 0 12px;
+}
+.fig svg{display:block; width:100%; height:auto}
+.fig-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+.fig-scroll svg{min-width:600px}
+.cap{
+  font-family:var(--f-ui); font-size:12px; line-height:1.85; color:var(--dim);
+  margin:0 0 46px;
+}
+.cap b{color:var(--ink); font-weight:500}
+
+/* ---------- データ表 ---------- */
+.tbl{width:100%; border-collapse:collapse; margin:0 0 18px; font-family:var(--f-ui); font-size:13.5px}
+.tbl th,.tbl td{text-align:left; padding:11px 12px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.75}
+.tbl th{width:30%; font-weight:500; color:var(--dim); white-space:nowrap}
+.tbl td{font-family:var(--f-body); font-size:14.5px}
+.tbl td .m{font-family:var(--f-mono); font-size:13px}
+
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:clamp(14px,2.4vw,26px)}
+@media (max-width:760px){ .grid2{grid-template-columns:1fr} }
+
+/* ---------- 人物カード ---------- */
+.who{
+  border:1px solid var(--line); background:var(--panel);
+  padding:22px 22px 20px; display:flex; flex-direction:column;
+}
+.who .no{font-family:var(--f-mono); font-size:10px; letter-spacing:.24em; color:var(--accent); margin-bottom:10px}
+.who .nm{font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:.04em; margin:0 0 2px}
+.who .ro{font-family:var(--f-ui); font-size:12px; color:var(--dim); letter-spacing:.06em; margin:0 0 14px}
+.who dl{margin:0; display:grid; grid-template-columns:5.5em 1fr; gap:7px 12px; font-family:var(--f-ui); font-size:13px; line-height:1.8}
+.who dt{color:var(--dim)}
+.who dd{margin:0}
+.who .q{
+  margin:16px 0 0; padding-top:14px; border-top:1px solid var(--line);
+  font-family:var(--f-display); font-size:15px; line-height:1.9; letter-spacing:.03em;
+}
+
+/* ---------- 年表 ---------- */
+.tl{list-style:none; margin:0 0 24px; padding:0; border-left:1px solid var(--line)}
+.tl li{position:relative; padding:0 0 22px 26px}
+.tl li::before{
+  content:""; position:absolute; left:-4px; top:11px; width:7px; height:7px;
+  border-radius:50%; background:var(--bg); border:1px solid var(--accent);
+}
+.tl li.key::before{background:var(--accent)}
+.tl .yr{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.1em; color:var(--accent); display:block; margin-bottom:1px}
+.tl .ev{font-family:var(--f-ui); font-size:14px; line-height:1.85}
+.tl .ev small{display:block; color:var(--dim); font-size:12.5px; margin-top:2px}
+
+/* ---------- 用語 ---------- */
+.gl{margin:0; display:grid; grid-template-columns:1fr; gap:0}
+.gl div{padding:15px 0; border-bottom:1px solid var(--line)}
+.gl dt{font-family:var(--f-ui); font-weight:700; font-size:14px; margin-bottom:5px}
+.gl dt span{font-family:var(--f-mono); font-weight:400; font-size:11px; color:var(--dim); margin-left:9px; letter-spacing:.05em}
+.gl dd{margin:0; font-size:14.5px; line-height:1.9; color:var(--ink)}
+
+/* ---------- 本編 ---------- */
+.chap{padding-top:clamp(56px,9vw,110px)}
+.chap:first-of-type{padding-top:0}
+.chap-head{margin:0 0 clamp(26px,4vw,44px)}
+.chap-d{
+  font-family:var(--f-mono); font-size:11px; letter-spacing:.26em; color:var(--ice);
+  display:block; margin-bottom:10px;
+}
+.chap-t{
+  font-family:var(--f-display); font-weight:700;
+  font-size:clamp(24px,4vw,38px); line-height:1.35; letter-spacing:.05em; margin:0;
+}
+.chap-s{font-family:var(--f-ui); font-size:12.5px; color:var(--dim); letter-spacing:.1em; margin:9px 0 0}
+.prose{max-width:38em}
+.prose p{margin:0 0 1.6em; text-align:justify; text-justify:inter-ideograph}
+.prose .lead{font-family:var(--f-display); font-size:1.12em; line-height:1.95; letter-spacing:.03em}
+.prose .verse{
+  font-family:var(--f-display); letter-spacing:.09em; line-height:2.1;
+  margin:0 0 1.8em; padding-left:1.1em; border-left:2px solid rgba(95,182,212,.4);
+}
+.prose .doc{
+  font-family:var(--f-mono); font-size:13.5px; line-height:2.0; letter-spacing:.01em;
+  background:rgba(255,255,255,.035); border:1px solid rgba(146,178,220,.2);
+  padding:18px 20px; margin:0 0 1.8em; white-space:pre-wrap;
+}
+.prose .vote{
+  font-family:var(--f-mono); font-size:clamp(20px,5vw,30px); letter-spacing:.5em;
+  color:var(--ice); text-align:center; margin:2em 0;
+}
+.brk{
+  text-align:center; margin:2.4em 0; font-family:var(--f-mono);
+  font-size:11px; letter-spacing:.6em; color:rgba(140,161,192,.55);
+}
+.end{
+  margin:clamp(50px,8vw,90px) 0 0; padding-top:24px; border-top:1px solid var(--line);
+  font-family:var(--f-mono); font-size:11px; letter-spacing:.3em; color:var(--dim); text-align:right;
+}
+
+/* ---------- フッタ ---------- */
+footer{
+  --bg:#0A1020; --ink:#8CA1C0; --dim:#5E799B; --line:rgba(146,178,220,.16); --accent:var(--ice);
+  background:var(--bg); color:var(--ink);
+  padding:clamp(40px,6vw,72px) var(--pad); font-family:var(--f-ui); font-size:12.5px; line-height:2;
+}
+footer .wrap{display:flex; flex-wrap:wrap; gap:28px; justify-content:space-between}
+footer b{color:var(--firn); font-weight:500}
+footer a{color:var(--ice); text-decoration:none; border-bottom:1px solid rgba(95,182,212,.35)}
+
+/* SVG 内で使う色 */
+.s-ink{fill:currentColor}
+</style>
+</head>
+<body>
+
+<!-- ============ 深度計 ============ -->
+<div class="rail" aria-hidden="true">
+  <div class="rail-cap">BOREHOLE<br>DEPTH</div>
+  <div class="rail-read" id="read">0</div>
+  <div class="rail-unit">METERS</div>
+  <div class="rail-year"><span class="yl">YEAR</span><span class="yv" id="year">2026</span></div>
+  <div class="rail-scale" id="scale">
+    <div class="rail-line"></div>
+    <div class="rail-fill" id="fill"></div>
+    <div class="rail-dot" id="dot"></div>
+  </div>
+</div>
+<div class="railbar" aria-hidden="true">
+  <span>深度</span><span class="rd" id="read2">0</span><span>m</span>
+  <span class="bx"><span class="bf" id="fill2"></span></span>
+  <span class="yr" id="year2" style="color:#D9A24A;font-weight:600;font-variant-numeric:tabular-nums">2026</span>
+</div>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<header class="mv hero" data-depth="0" data-tick="0 ／ 扉">
+  <div class="wide">
+    <p class="hero-poem">
+      <span>誰もいない白銀の大地</span>
+      <span>すべてが凍てつく空気</span>
+      <span>沈まない太陽</span>
+      <span>または</span>
+      <span>開けない夜</span>
+    </p>
+    <h1 class="hero-title">深度三千四十一メートル</h1>
+    <p class="hero-sub">ドームΩ基地 第三十次越冬記録 ／ 一千五百万年前から、一千五百万年後まで</p>
+    <div class="hero-meta">
+      <span>南緯 <b>77°41′</b></span>
+      <span>東経 <b>41°18′</b></span>
+      <span>標高 <b>3,810 m</b></span>
+      <span>氷厚 <b>3,041 m</b></span>
+      <span>越冬隊 <b>5 名</b></span>
+      <span>極夜 <b>137 日</b></span>
+      <span>物語の全長 <b>30,000,000 年</b></span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 序文 ============ -->
+<section class="mv mv-day" data-depth="0">
+  <div class="wrap">
+    <p class="eyebrow">Prologue</p>
+    <h2>三十年かけて開けた穴を、十一日かけて塞ぐ話。<br>そして、それが何ひとつ守らなかった話。</h2>
+    <p class="lede">
+      東南極高原の真ん中に、深さ三千メートルの穴がある。氷を貫き、七十万年前の大気を取り出すための穴だ。二〇二六年七月十二日、極夜百十八日目の未明、その穴は予定より三十九メートル手前で氷床の底を抜けた。<br><br>
+      下にあったのは岩ではなく、水だった。少なくとも千五百万年、外気に触れないまま封じられてきた湖。そして穴の中には、三千メートルぶんの人工の掘削液が入っていた。<br><br>
+      五人はその冬、自分たちにできる最善を尽くした。全員が一致した。三十年を捨てた。<br><br>
+      それは正しい判断だった。そして、何の役にも立たなかった。<br><br>
+      本編は十七の節からなり、うち六節は二〇二六年の外側にある。最古の節は千五百万年前、最新の節は千五百万年後。扉に掲げた五行は、五人に一行ずつ配られ、節をまたいで繰り返し現れる。最後にもう一度だけ五行そろって出てくるが、そのときには言葉が変わっている。
+    </p>
+  </div>
+</section>
+
+<!-- ============ 資料篇：地図 ============ -->
+<section class="mv mv-day" data-depth="0" data-tick="資料 ／ 地図">
+  <div class="wide">
+    <p class="eyebrow">Fig. 01 ／ 位置</p>
+    <h2>ドームΩ基地の位置</h2>
+    <p class="lede">東南極高原、ドームふじ基地の南東およそ九十キロ。最寄りの沿岸拠点から内陸雪上車で片道十四日。極夜のあいだ、この点に到達できる手段は地上・空路ともに存在しない。</p>
+
+    <div class="fig fig-scroll">
+      <svg viewBox="0 0 940 760" role="img" aria-label="南極大陸におけるドームΩ基地の位置図">
+        <defs>
+          <radialGradient id="gIce" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="#F4F8FB"/><stop offset="100%" stop-color="#D6E3EC"/>
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="940" height="760" fill="#DCE6EE"/>
+        <!-- 緯度線 -->
+        <circle cx="450" cy="380" r="290" fill="none" stroke="#B7C8D6" stroke-width="1" stroke-dasharray="3 5"/>
+        <circle cx="450" cy="380" r="145" fill="none" stroke="#B7C8D6" stroke-width="1" stroke-dasharray="3 5"/>
+        <!-- 大陸 -->
+        <path fill="url(#gIce)" stroke="#8FA9BC" stroke-width="1.4" d="
+          M450,80 L529,85 L600,120 L657,174 L697,238 L685,295 L734,330 L744,406
+          L732,483 L696,552 L640,606 L573,643 L496,641 L457,580 L416,572 L365,615
+          L308,627 L241,589 L199,525 L184,451 L155,390 L155,328 L140,267 L91,205
+          L117,188 L179,210 L261,232 L305,208 L349,163 L393,111 Z"/>
+        <!-- 棚氷ハッチ -->
+        <path fill="none" stroke="#C3D4E0" stroke-width="1" d="M416,572 L457,580 M365,615 L416,572 M305,208 L261,232"/>
+        <!-- 経度線 -->
+        <g stroke="#B7C8D6" stroke-width="1" stroke-dasharray="2 6">
+          <line x1="450" y1="380" x2="450" y2="70"/><line x1="450" y1="380" x2="760" y2="380"/>
+          <line x1="450" y1="380" x2="450" y2="690"/><line x1="450" y1="380" x2="140" y2="380"/>
+        </g>
+        <!-- 経度ラベル -->
+        <g font-family="IBM Plex Mono, monospace" font-size="10" fill="#7A90A3" letter-spacing="1">
+          <text x="450" y="60" text-anchor="middle">0°</text>
+          <text x="775" y="384">90°E</text>
+          <text x="450" y="706" text-anchor="middle">180°</text>
+          <text x="90" y="384">90°W</text>
+          <text x="466" y="533" fill="#95A9B8">80°S</text>
+          <text x="466" y="678" fill="#95A9B8">70°S</text>
+        </g>
+        <!-- 海名 -->
+        <g font-family="Zen Kaku Gothic New, sans-serif" font-size="13" fill="#6F8698" letter-spacing="2">
+          <text x="196" y="140">ウェッデル海</text>
+          <text x="404" y="700" text-anchor="middle">ロス海</text>
+          <text x="800" y="470">インド洋区</text>
+          <text x="70" y="250" font-size="11">南極半島</text>
+        </g>
+        <!-- 南極点 -->
+        <g>
+          <circle cx="450" cy="380" r="4" fill="none" stroke="#3F5568" stroke-width="1.4"/>
+          <line x1="443" y1="380" x2="457" y2="380" stroke="#3F5568" stroke-width="1"/>
+          <line x1="450" y1="373" x2="450" y2="387" stroke="#3F5568" stroke-width="1"/>
+          <text x="450" y="405" text-anchor="middle" font-family="Zen Kaku Gothic New, sans-serif" font-size="11" fill="#3F5568">南極点</text>
+        </g>
+        <!-- 内陸旅行ルート -->
+        <path d="M645,146 C620,175 600,205 568,246" fill="none" stroke="#1E6F92" stroke-width="1.6" stroke-dasharray="6 5"/>
+        <text x="626" y="205" font-family="IBM Plex Mono, monospace" font-size="10" fill="#1E6F92" transform="rotate(52 626 205)">1,080 km ／ 14 days</text>
+        <!-- 沿岸拠点 -->
+        <g>
+          <rect x="640" y="141" width="10" height="10" fill="none" stroke="#1E6F92" stroke-width="1.8"/>
+          <text x="660" y="144" font-family="Zen Kaku Gothic New, sans-serif" font-size="12.5" fill="#22485E">沿岸拠点 S-19</text>
+          <text x="660" y="160" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#7A90A3">69°01′S 39°35′E ／ 通年</text>
+        </g>
+        <!-- ドームΩ -->
+        <g>
+          <circle cx="568" cy="246" r="22" fill="none" stroke="#D9A24A" stroke-width="1" opacity=".8"/>
+          <circle cx="568" cy="246" r="13" fill="none" stroke="#D9A24A" stroke-width="1.2"/>
+          <circle cx="568" cy="246" r="5.5" fill="#D9A24A"/>
+          <line x1="568" y1="246" x2="470" y2="300" stroke="#B0873C" stroke-width="1"/>
+          <text x="250" y="298" font-family="Shippori Mincho B1, serif" font-weight="700" font-size="19" fill="#1B2733" letter-spacing="2">ドームΩ基地</text>
+          <text x="250" y="318" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="#5B7183">77°41′S 41°18′E ／ 3,810 m a.s.l.</text>
+          <text x="250" y="335" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="#5B7183">ICE THICKNESS 3,041 m</text>
+        </g>
+        <!-- 凡例 -->
+        <g font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#6F8698">
+          <text x="40" y="700" letter-spacing="1.5">LEGEND</text>
+          <circle cx="46" cy="718" r="4" fill="#D9A24A"/><text x="58" y="722">深層掘削拠点</text>
+          <rect x="42" y="734" width="8" height="8" fill="none" stroke="#1E6F92" stroke-width="1.6"/><text x="58" y="742">通年沿岸拠点</text>
+          <line x1="160" y1="718" x2="184" y2="718" stroke="#1E6F92" stroke-width="1.6" stroke-dasharray="5 4"/><text x="192" y="722">内陸雪上車ルート</text>
+        </g>
+        <text x="900" y="726" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#93A7B6" letter-spacing="1">FICTIONAL — 正距方位図法（極心）</text>
+      </svg>
+    </div>
+    <p class="cap"><b>図01.</b> ドームΩは氷床の「ドーム」＝流動が最小になる頂点にあたる。氷が横に流れないため、地層が水平に、順番どおりに積み上がる。世界で最も古い氷を、最も乱れの少ない状態で取り出せる場所が、地球上に数か所しかない。ここはそのひとつだった。</p>
+
+    <p class="eyebrow">Fig. 02 ／ 平面</p>
+    <h2>基地配置</h2>
+    <p class="lede">建屋は五棟。すべて高床式で、年間の堆積（約三センチ）と吹きだまりを避けるため、四年ごとにジャッキアップされる。五人が徒歩で行き来できる範囲に、生活のすべてがある。</p>
+
+    <div class="fig fig-scroll">
+      <svg viewBox="0 0 940 520" role="img" aria-label="ドームΩ基地の建屋配置図">
+        <rect x="0" y="0" width="940" height="520" fill="#F3F7FA"/>
+        <g stroke="#DFE8EF" stroke-width="1">
+          <path d="M0 60H940M0 120H940M0 180H940M0 240H940M0 300H940M0 360H940M0 420H940M0 480H940"/>
+          <path d="M60 0V520M120 0V520M180 0V520M240 0V520M300 0V520M360 0V520M420 0V520M480 0V520M540 0V520M600 0V520M660 0V520M720 0V520M780 0V520M840 0V520M900 0V520"/>
+        </g>
+        <g font-family="Zen Kaku Gothic New, sans-serif" font-size="12.5" fill="#1B2733">
+          <!-- 主棟 -->
+          <rect x="120" y="180" width="200" height="120" fill="#FFFFFF" stroke="#3E566A" stroke-width="2"/>
+          <text x="136" y="208" font-weight="700">主棟</text>
+          <text x="136" y="230" font-size="11" fill="#5B7183">居住区 5室／食堂／厨房</text>
+          <text x="136" y="248" font-size="11" fill="#5B7183">医務室／隊長室</text>
+          <text x="136" y="266" font-size="11" fill="#5B7183">通信室（衛星回線端末）</text>
+          <text x="136" y="288" font-family="IBM Plex Mono, monospace" font-size="10" fill="#93A7B6">A-BLOCK / 240 m²</text>
+          <!-- 連絡通路 -->
+          <rect x="320" y="222" width="120" height="36" fill="#E3ECF2" stroke="#3E566A" stroke-width="1.4"/>
+          <text x="380" y="245" text-anchor="middle" font-size="10.5" fill="#5B7183">連絡通路（−40℃）</text>
+          <!-- 掘削棟 -->
+          <rect x="440" y="150" width="230" height="180" fill="#FFF7E8" stroke="#B0873C" stroke-width="2"/>
+          <text x="458" y="180" font-weight="700" fill="#7A5A20">掘削棟</text>
+          <text x="458" y="202" font-size="11" fill="#8A6B2E">ウインチ塔／掘削液タンク</text>
+          <text x="458" y="220" font-size="11" fill="#8A6B2E">コア処理室（−25℃保持）</text>
+          <text x="458" y="238" font-size="11" fill="#8A6B2E">コア保管庫 3,000本</text>
+          <!-- 孔口 -->
+          <circle cx="596" cy="288" r="20" fill="none" stroke="#D9A24A" stroke-width="1.2"/>
+          <circle cx="596" cy="288" r="11" fill="none" stroke="#D9A24A" stroke-width="1.6"/>
+          <circle cx="596" cy="288" r="4" fill="#D9A24A"/>
+          <text x="596" y="322" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#B0873C">BOREHOLE Ω-1</text>
+          <!-- 発電棟 -->
+          <rect x="120" y="360" width="150" height="90" fill="#FFFFFF" stroke="#3E566A" stroke-width="1.6"/>
+          <text x="136" y="388" font-weight="700">発電棟</text>
+          <text x="136" y="408" font-size="11" fill="#5B7183">発電機 3基（2基冗長）</text>
+          <text x="136" y="426" font-size="11" fill="#5B7183">造水／熱源</text>
+          <!-- 燃料 -->
+          <rect x="300" y="380" width="46" height="70" rx="6" fill="#EEF4F8" stroke="#3E566A" stroke-width="1.4"/>
+          <rect x="356" y="380" width="46" height="70" rx="6" fill="#EEF4F8" stroke="#3E566A" stroke-width="1.4"/>
+          <text x="300" y="470" font-size="11" fill="#5B7183">燃料タンク ×2（越冬用 380 kL）</text>
+          <!-- 車庫 -->
+          <rect x="700" y="370" width="160" height="80" fill="#FFFFFF" stroke="#3E566A" stroke-width="1.6"/>
+          <text x="716" y="398" font-weight="700">雪上車庫</text>
+          <text x="716" y="418" font-size="11" fill="#5B7183">SM100 ×2／橇</text>
+          <!-- 退避モジュール -->
+          <rect x="700" y="80" width="160" height="60" fill="#FDF0F0" stroke="#A85B5B" stroke-width="1.6" stroke-dasharray="5 3"/>
+          <text x="716" y="106" font-weight="700" fill="#8B4646">非常用退避モジュール</text>
+          <text x="716" y="126" font-size="11" fill="#A06565">独立電源／21日間生存</text>
+          <!-- 気象ヤード -->
+          <g>
+            <line x1="120" y1="80" x2="120" y2="140" stroke="#3E566A" stroke-width="1.6"/>
+            <line x1="108" y1="80" x2="132" y2="80" stroke="#3E566A" stroke-width="1.6"/>
+            <line x1="112" y1="92" x2="128" y2="92" stroke="#3E566A" stroke-width="1.6"/>
+            <text x="144" y="94" font-size="12">気象観測ヤード</text>
+            <text x="144" y="112" font-size="11" fill="#5B7183">風速計／放射計／雪尺</text>
+            <circle cx="240" cy="120" r="5" fill="#5FB6D4"/>
+            <text x="254" y="124" font-size="11" fill="#1E6F92">浅層コア掘削地点（〜30 m）</text>
+          </g>
+          <!-- アンテナ -->
+          <g transform="translate(880,200)">
+            <circle cx="0" cy="0" r="18" fill="none" stroke="#3E566A" stroke-width="1.6"/>
+            <line x1="0" y1="18" x2="0" y2="46" stroke="#3E566A" stroke-width="1.6"/>
+            <text x="-8" y="70" text-anchor="middle" font-size="11" fill="#5B7183" transform="rotate(-90 -8 70)">衛星アンテナ</text>
+          </g>
+        </g>
+        <!-- 風配 -->
+        <g transform="translate(70,60)">
+          <circle cx="0" cy="0" r="26" fill="none" stroke="#93A7B6" stroke-width="1"/>
+          <path d="M0,-26 L6,-6 L0,-11 L-6,-6 Z" fill="#3E566A"/>
+          <text x="0" y="-32" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#5B7183">N</text>
+          <path d="M-19,19 L-2,4" stroke="#B0873C" stroke-width="2"/>
+          <path d="M-2,4 L-9,4 L-2,11 Z" fill="#B0873C" transform="rotate(180 -2 4)"/>
+          <text x="0" y="46" text-anchor="middle" font-family="Zen Kaku Gothic New, sans-serif" font-size="10" fill="#8A6B2E">卓越風 NE 4.6 m/s</text>
+        </g>
+        <!-- スケール -->
+        <g transform="translate(700,490)">
+          <line x1="0" y1="0" x2="120" y2="0" stroke="#3E566A" stroke-width="1.6"/>
+          <line x1="0" y1="-5" x2="0" y2="5" stroke="#3E566A" stroke-width="1.6"/>
+          <line x1="120" y1="-5" x2="120" y2="5" stroke="#3E566A" stroke-width="1.6"/>
+          <text x="60" y="-10" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#5B7183">50 m</text>
+        </g>
+      </svg>
+    </div>
+    <p class="cap"><b>図02.</b> 主棟と掘削棟をつなぐ連絡通路は、暖房されていない。冬のあいだ、五人は一日に何度もこの三十六メートルを往復する。通路の中ほどにある小窓が、極夜のあいだ唯一「外を見る」場所になった。</p>
+  </div>
+</section>
+
+<!-- ============ 資料篇：断面 ============ -->
+<section class="mv mv-day" data-depth="0" data-tick="資料 ／ 断面">
+  <div class="wide">
+    <p class="eyebrow">Fig. 03 ／ 断面</p>
+    <h2>掘削孔 Ω-1 断面図</h2>
+    <p class="lede">この物語の各章は、掘削孔の深度に対応している。深く潜るほど古い空気に届き、同時に、五人がそれぞれ触れられずにいる年に近づく。深度と年代の対応は、氷の圧縮率が深部で非線形に増すため、下にいくほど急激に古くなる。</p>
+
+    <div class="fig fig-scroll">
+      <svg viewBox="0 0 940 1120" role="img" aria-label="掘削孔Ω-1の深度断面図。各深度の氷の年代と、対応する章を示す">
+        <defs>
+          <linearGradient id="col" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="9%" stop-color="#EAF3F8"/>
+            <stop offset="28%" stop-color="#C0E0EC"/>
+            <stop offset="52%" stop-color="#8AC6DE"/>
+            <stop offset="75%" stop-color="#4E9DBE"/>
+            <stop offset="93%" stop-color="#2A6F94"/>
+            <stop offset="100%" stop-color="#1B4E6B"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="940" height="1120" fill="#F3F7FA"/>
+
+        <!-- 空 -->
+        <rect x="0" y="0" width="940" height="70" fill="#DCE6EE"/>
+        <text x="24" y="42" font-family="Zen Kaku Gothic New, sans-serif" font-size="12" fill="#7A90A3" letter-spacing="2">大気（−68℃ ／ 620 hPa）</text>
+
+        <!-- 氷柱 -->
+        <rect x="300" y="70" width="150" height="930" fill="url(#col)" stroke="#8FA9BC" stroke-width="1"/>
+        <!-- 孔 -->
+        <rect x="366" y="70" width="18" height="930" fill="#0F2233" opacity=".82"/>
+        <text x="375" y="92" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#F3F7FA" letter-spacing="1" transform="rotate(90 375 92)">Ø 132 mm</text>
+
+        <!-- 湖 -->
+        <rect x="300" y="1000" width="150" height="66" fill="#2E8C8C" opacity=".85"/>
+        <rect x="300" y="1066" width="150" height="34" fill="#6B5B4A"/>
+        <text x="375" y="1088" text-anchor="middle" font-family="Zen Kaku Gothic New, sans-serif" font-size="11" fill="#EDE3D6">基盤岩</text>
+
+        <!-- 深度目盛 -->
+        <g font-family="IBM Plex Mono, monospace" font-size="11" fill="#5B7183">
+          <g stroke="#B7C8D6" stroke-width="1">
+            <line x1="240" y1="70" x2="300" y2="70"/>
+            <line x1="255" y1="223" x2="300" y2="223"/>
+            <line x1="240" y1="376" x2="300" y2="376"/>
+            <line x1="255" y1="529" x2="300" y2="529"/>
+            <line x1="240" y1="682" x2="300" y2="682"/>
+            <line x1="255" y1="835" x2="300" y2="835"/>
+            <line x1="240" y1="988" x2="300" y2="988"/>
+          </g>
+          <text x="232" y="74" text-anchor="end">0 m</text>
+          <text x="232" y="380" text-anchor="end">1,000 m</text>
+          <text x="232" y="686" text-anchor="end">2,000 m</text>
+          <text x="232" y="992" text-anchor="end">3,000 m</text>
+          <text x="248" y="227" text-anchor="end" fill="#93A7B6">500</text>
+          <text x="248" y="533" text-anchor="end" fill="#93A7B6">1,500</text>
+          <text x="248" y="839" text-anchor="end" fill="#93A7B6">2,500</text>
+        </g>
+
+        <!-- 層区分（右） -->
+        <g font-family="Zen Kaku Gothic New, sans-serif" font-size="12">
+          <!-- 6m -->
+          <line x1="450" y1="72" x2="520" y2="72" stroke="#5FB6D4" stroke-width="1.4"/>
+          <text x="528" y="68" fill="#1B2733" font-weight="700">深度 6 m ／ 約200年前</text>
+          <text x="528" y="86" font-size="11" fill="#5B7183">浅層コア。汐里が弟の年を重ねる層。</text>
+
+          <!-- 100m BCO -->
+          <line x1="300" y1="101" x2="450" y2="101" stroke="#3E566A" stroke-width="1" stroke-dasharray="4 3"/>
+          <line x1="450" y1="101" x2="520" y2="112" stroke="#8FA9BC" stroke-width="1"/>
+          <text x="528" y="116" fill="#1B2733">深度 100 m ／ 気泡閉塞深度（BCO）</text>
+          <text x="528" y="134" font-size="11" fill="#5B7183">ここより深く、空気は完全に密封される。</text>
+
+          <!-- 700m -->
+          <line x1="450" y1="284" x2="520" y2="284" stroke="#5FB6D4" stroke-width="1.4"/>
+          <text x="528" y="280" fill="#1B2733" font-weight="700">深度 700 m ／ 約2万5千年前</text>
+          <text x="528" y="298" font-size="11" fill="#5B7183">最終氷期最盛期。CO₂ 約190 ppm。</text>
+          <text x="528" y="316" font-size="11" fill="#B0873C">第三章：アンドレアス・ヴェルナー</text>
+
+          <!-- 1600m -->
+          <line x1="450" y1="560" x2="520" y2="560" stroke="#5FB6D4" stroke-width="1.4"/>
+          <text x="528" y="556" fill="#1B2733" font-weight="700">深度 1,600 m ／ 約9万年前</text>
+          <text x="528" y="574" font-size="11" fill="#5B7183">ダンスガード・オシュガー振動の記録層。</text>
+          <text x="528" y="592" font-size="11" fill="#B0873C">第四章：キム・ハウン</text>
+
+          <!-- 2400m -->
+          <line x1="450" y1="805" x2="520" y2="805" stroke="#5FB6D4" stroke-width="1.4"/>
+          <text x="528" y="801" fill="#1B2733" font-weight="700">深度 2,400 m ／ 約25万年前</text>
+          <text x="528" y="819" font-size="11" fill="#5B7183">氷結晶が粗大化。層の判別が難しくなる。</text>
+          <text x="528" y="837" font-size="11" fill="#B0873C">第五章：エレナ・パヴロヴナ</text>
+
+          <!-- 3000m -->
+          <line x1="450" y1="988" x2="520" y2="988" stroke="#5FB6D4" stroke-width="1.4"/>
+          <text x="528" y="972" fill="#1B2733" font-weight="700">深度 3,000 m ／ 約65万年前</text>
+          <text x="528" y="990" font-size="11" fill="#5B7183">再結晶氷。年層は完全に潰れている。</text>
+          <text x="528" y="1008" font-size="11" fill="#B0873C">第六章：チディ・オコンクウォ</text>
+
+          <!-- 3041m -->
+          <line x1="300" y1="1000" x2="520" y2="1000" stroke="#D9A24A" stroke-width="2"/>
+          <text x="528" y="1036" fill="#8B4646" font-weight="700">深度 3,041 m ／ 氷床底面・湖面</text>
+          <text x="528" y="1054" font-size="11" fill="#A06565">推定隔離期間 1,500万年。想定より39 m浅かった。</text>
+          <text x="528" y="1072" font-size="11" fill="#B0873C">第七章〜第十一章</text>
+        </g>
+
+        <!-- 左：失われた区間 -->
+        <g>
+          <rect x="120" y="988" width="110" height="14" fill="#D9A24A" opacity=".25" stroke="#B0873C" stroke-dasharray="3 2"/>
+          <text x="120" y="1024" font-family="Zen Kaku Gothic New, sans-serif" font-size="11" fill="#8B4646" font-weight="700">未回収区間</text>
+          <text x="120" y="1042" font-family="Zen Kaku Gothic New, sans-serif" font-size="10.5" fill="#A06565">3,035–3,041 m</text>
+          <text x="120" y="1058" font-family="Zen Kaku Gothic New, sans-serif" font-size="10.5" fill="#A06565">推定 110万〜150万年前</text>
+        </g>
+
+        <!-- 左：年代スケールの非線形を示す帯 -->
+        <g font-family="IBM Plex Mono, monospace" font-size="10" fill="#93A7B6">
+          <text x="120" y="120" letter-spacing="1">AGE SCALE</text>
+          <text x="120" y="140">0.2 ka</text>
+          <text x="120" y="300">25 ka</text>
+          <text x="120" y="576">90 ka</text>
+          <text x="120" y="821">250 ka</text>
+          <text x="120" y="960">650 ka</text>
+          <line x1="118" y1="150" x2="118" y2="965" stroke="#C9D7E1" stroke-width="1"/>
+        </g>
+
+        <text x="916" y="1100" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#93A7B6" letter-spacing="1">FICTIONAL — 深度スケールは線形／年代スケールは非線形</text>
+      </svg>
+    </div>
+    <p class="cap"><b>図03.</b> 掘削孔は氷の圧力で常に潰れようとするため、内部は掘削液で満たされ、周囲の氷と同じ圧力に保たれている。この液体が、孔を維持する唯一の手段であり、同時に、この物語で湖に落ちた汚染源でもある。<b>穴を開けておくことと、下を汚さないことは、両立しない。</b></p>
+  </div>
+</section>
+
+<!-- ============ 資料篇：相関図 ============ -->
+<section class="mv mv-day" data-depth="0" data-tick="資料 ／ 相関">
+  <div class="wide">
+    <p class="eyebrow">Fig. 04 ／ 相関</p>
+    <h2>人物相関図と、五行の割り当て</h2>
+    <p class="lede">この図は横ではなく、縦に読む。上段が「地上に置いてきた不在者」、中段が「越冬隊五名」、下段が「深度3,041メートルへ投下されたもの」。そして中段の五人には、扉に掲げた詩の一行が、それぞれ一行ずつ配られている。</p>
+
+    <div class="fig fig-scroll">
+      <svg viewBox="0 0 940 800" role="img" aria-label="登場人物の相関図。不在者・越冬隊・投下品の三層構造">
+        <rect x="0" y="0" width="940" height="800" fill="#F3F7FA"/>
+
+        <!-- 層ラベル -->
+        <g font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#93A7B6" letter-spacing="2.5">
+          <text x="24" y="40">TIER 1 ／ 不在者</text>
+          <text x="24" y="368">TIER 2 ／ 越冬隊 5</text>
+          <text x="24" y="660">TIER 3 ／ 深度 3,041 m</text>
+        </g>
+        <line x1="24" y1="632" x2="916" y2="632" stroke="#D9A24A" stroke-width="1.5"/>
+        <text x="916" y="624" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#B0873C" letter-spacing="2">SEALED 2026.07.31</text>
+
+        <!-- 縦の線（各人物の一本） -->
+        <g stroke="#B7C8D6" stroke-width="1" stroke-dasharray="3 4">
+          <line x1="110" y1="128" x2="110" y2="700"/>
+          <line x1="300" y1="128" x2="300" y2="700"/>
+          <line x1="490" y1="128" x2="490" y2="700"/>
+          <line x1="680" y1="128" x2="680" y2="700"/>
+          <line x1="866" y1="128" x2="866" y2="700"/>
+        </g>
+
+        <!-- TIER 1 -->
+        <g font-family="Zen Kaku Gothic New, sans-serif">
+          <g>
+            <rect x="30" y="60" width="160" height="68" rx="3" fill="#FFFFFF" stroke="#A8B8C6" stroke-width="1.3" stroke-dasharray="5 3"/>
+            <text x="110" y="86" text-anchor="middle" font-size="14" font-weight="700" fill="#5B7183">本橋 拓海</text>
+            <text x="110" y="105" text-anchor="middle" font-size="11" fill="#93A7B6">汐里の弟／享年26</text>
+            <text x="110" y="121" text-anchor="middle" font-size="10" fill="#A8B8C6">2012年3月・自死</text>
+          </g>
+          <g>
+            <rect x="220" y="60" width="160" height="68" rx="3" fill="#FFFFFF" stroke="#A8B8C6" stroke-width="1.3" stroke-dasharray="5 3"/>
+            <text x="300" y="86" text-anchor="middle" font-size="14" font-weight="700" fill="#5B7183">ヘルガ ／ エルケ</text>
+            <text x="300" y="105" text-anchor="middle" font-size="11" fill="#93A7B6">娘（35）／孫（6）</text>
+            <text x="300" y="121" text-anchor="middle" font-size="10" fill="#A8B8C6">ハンブルク・存命</text>
+          </g>
+          <g>
+            <rect x="410" y="60" width="160" height="68" rx="3" fill="#FFFFFF" stroke="#A8B8C6" stroke-width="1.3" stroke-dasharray="5 3"/>
+            <text x="490" y="86" text-anchor="middle" font-size="14" font-weight="700" fill="#5B7183">キム・ヨンス</text>
+            <text x="490" y="105" text-anchor="middle" font-size="11" fill="#93A7B6">ハウンの父／享年61</text>
+            <text x="490" y="121" text-anchor="middle" font-size="10" fill="#A8B8C6">2026年6月・心筋梗塞</text>
+          </g>
+          <g>
+            <rect x="600" y="60" width="160" height="68" rx="3" fill="#FFFFFF" stroke="#A8B8C6" stroke-width="1.3" stroke-dasharray="5 3"/>
+            <text x="680" y="86" text-anchor="middle" font-size="14" font-weight="700" fill="#5B7183">V・ソコロフ</text>
+            <text x="680" y="105" text-anchor="middle" font-size="11" fill="#93A7B6">元隊員／享年34</text>
+            <text x="680" y="121" text-anchor="middle" font-size="10" fill="#A8B8C6">2015年・虫垂穿孔</text>
+          </g>
+          <g>
+            <rect x="786" y="60" width="160" height="68" rx="3" fill="#FFFFFF" stroke="#A8B8C6" stroke-width="1.3" stroke-dasharray="5 3"/>
+            <text x="866" y="86" text-anchor="middle" font-size="14" font-weight="700" fill="#5B7183">アダエゼ</text>
+            <text x="866" y="105" text-anchor="middle" font-size="11" fill="#93A7B6">チディの母（74）</text>
+            <text x="866" y="121" text-anchor="middle" font-size="10" fill="#A8B8C6">ラゴス・存命</text>
+          </g>
+        </g>
+
+        <!-- TIER 2 ＋ 五行の割り当て -->
+        <g font-family="Zen Kaku Gothic New, sans-serif">
+          <rect x="30" y="392" width="160" height="106" rx="3" fill="#FFFFFF" stroke="#1E6F92" stroke-width="2"/>
+          <text x="110" y="420" text-anchor="middle" font-family="Shippori Mincho B1, serif" font-size="17" font-weight="700" fill="#12202C">本橋 汐里</text>
+          <text x="110" y="440" text-anchor="middle" font-size="11" fill="#1E6F92">掘削技師／41</text>
+          <line x1="46" y1="452" x2="174" y2="452" stroke="#DCE6EE"/>
+          <text x="110" y="472" text-anchor="middle" font-family="Shippori Mincho B1, serif" font-size="12.5" fill="#B0873C">すべてが凍てつく空気</text>
+          <text x="110" y="489" text-anchor="middle" font-size="10" fill="#93A7B6">消せないものの側で働く</text>
+
+          <rect x="220" y="392" width="160" height="106" rx="3" fill="#FFFFFF" stroke="#1E6F92" stroke-width="2"/>
+          <text x="300" y="420" text-anchor="middle" font-family="Shippori Mincho B1, serif" font-size="17" font-weight="700" fill="#12202C">A・ヴェルナー</text>
+          <text x="300" y="440" text-anchor="middle" font-size="11" fill="#1E6F92">主任氷床学者／63</text>
+          <line x1="236" y1="452" x2="364" y2="452" stroke="#DCE6EE"/>
+          <text x="300" y="472" text-anchor="middle" font-family="Shippori Mincho B1, serif" font-size="12.5" fill="#B0873C">誰もいない白銀の大地</text>
+          <text x="300" y="489" text-anchor="middle" font-size="10" fill="#93A7B6">三十年、誰もいない場所に</text>
+
+          <rect x="410" y="392" width="160" height="106" rx="3" fill="#FFFFFF" stroke="#1E6F92" stroke-width="2"/>
+          <text x="490" y="420" text-anchor="middle" font-family="Shippori Mincho B1, serif" font-size="17" font-weight="700" fill="#12202C">キム・ハウン</text>
+          <text x="490" y="440" text-anchor="middle" font-size="11" fill="#1E6F92">通信担当／29</text>
+          <line x1="426" y1="452" x2="554" y2="452" stroke="#DCE6EE"/>
+          <text x="490" y="472" text-anchor="middle" font-family="Shippori Mincho B1, serif" font-size="12.5" fill="#B0873C">開けない夜</text>
+          <text x="490" y="489" text-anchor="middle" font-size="10" fill="#93A7B6">十一週間、誰も来なかった</text>
+
+          <rect x="600" y="392" width="160" height="106" rx="3" fill="#FFFFFF" stroke="#B0873C" stroke-width="2.4"/>
+          <text x="680" y="420" text-anchor="middle" font-family="Shippori Mincho B1, serif" font-size="17" font-weight="700" fill="#12202C">E・パヴロヴナ</text>
+          <text x="680" y="440" text-anchor="middle" font-size="11" fill="#B0873C">越冬隊長・医師／48</text>
+          <line x1="616" y1="452" x2="744" y2="452" stroke="#F0E2C8"/>
+          <text x="680" y="474" text-anchor="middle" font-family="Shippori Mincho B1, serif" font-size="15" font-weight="700" fill="#8B4646" letter-spacing="4">または</text>
+          <text x="680" y="491" text-anchor="middle" font-size="10" fill="#93A7B6">分岐そのものを引き受ける者</text>
+
+          <rect x="786" y="392" width="160" height="106" rx="3" fill="#FFFFFF" stroke="#1E6F92" stroke-width="2"/>
+          <text x="866" y="420" text-anchor="middle" font-family="Shippori Mincho B1, serif" font-size="17" font-weight="700" fill="#12202C">C・オコンクウォ</text>
+          <text x="866" y="440" text-anchor="middle" font-size="11" fill="#1E6F92">調理担当／38</text>
+          <line x1="802" y1="452" x2="930" y2="452" stroke="#DCE6EE"/>
+          <text x="866" y="472" text-anchor="middle" font-family="Shippori Mincho B1, serif" font-size="12.5" fill="#B0873C">沈まない太陽</text>
+          <text x="866" y="489" text-anchor="middle" font-size="10" fill="#93A7B6">まだ夜が来ていない人</text>
+        </g>
+
+        <!-- 関係アーク -->
+        <g fill="none" stroke="#1E6F92" stroke-width="1.2">
+          <path d="M110,486 C110,528 300,528 300,486"/>
+          <path d="M490,486 C490,540 866,540 866,486"/>
+          <path d="M110,486 C110,560 866,560 866,486"/>
+        </g>
+        <g font-family="Zen Kaku Gothic New, sans-serif" font-size="10.5" fill="#1E6F92" text-anchor="middle">
+          <rect x="152" y="503" width="106" height="17" fill="#F3F7FA"/><text x="205" y="516">掘る者と、計算した者</text>
+          <rect x="620" y="527" width="116" height="17" fill="#F3F7FA"/><text x="678" y="540">十一週目のスープ</text>
+          <rect x="430" y="547" width="116" height="17" fill="#F3F7FA"/><text x="488" y="560">理屈の外を話せる相手</text>
+        </g>
+        <!-- 隊長から全員 -->
+        <g stroke="#B0873C" stroke-width="1" stroke-dasharray="4 3" fill="none">
+          <path d="M680,486 C680,600 110,590 110,600"/>
+        </g>
+        <text x="330" y="596" font-family="Zen Kaku Gothic New, sans-serif" font-size="10.5" fill="#B0873C">毎朝の診察／六人目の欄／投票の宣言</text>
+
+        <!-- TIER 3 -->
+        <g font-family="Zen Kaku Gothic New, sans-serif" font-size="12">
+          <g>
+            <rect x="46" y="678" width="128" height="56" rx="3" fill="#FFF7E8" stroke="#B0873C" stroke-width="1.3"/>
+            <text x="110" y="702" text-anchor="middle" font-weight="700" fill="#7A5A20">携帯電話</text>
+            <text x="110" y="721" text-anchor="middle" font-size="10.5" fill="#A0803C">着信履歴 0:38</text>
+          </g>
+          <g>
+            <rect x="236" y="678" width="128" height="56" rx="3" fill="#FFF7E8" stroke="#B0873C" stroke-width="1.3"/>
+            <text x="300" y="702" text-anchor="middle" font-weight="700" fill="#7A5A20">便箋一枚</text>
+            <text x="300" y="721" text-anchor="middle" font-size="10.5" fill="#A0803C">写真は残した</text>
+          </g>
+          <g>
+            <rect x="426" y="678" width="128" height="56" rx="3" fill="#FFF7E8" stroke="#B0873C" stroke-width="1.3"/>
+            <text x="490" y="702" text-anchor="middle" font-weight="700" fill="#7A5A20">腕時計</text>
+            <text x="490" y="721" text-anchor="middle" font-size="10.5" fill="#A0803C">4:17で停止</text>
+          </g>
+          <g>
+            <rect x="616" y="678" width="128" height="56" rx="3" fill="#FFF7E8" stroke="#B0873C" stroke-width="1.3"/>
+            <text x="680" y="702" text-anchor="middle" font-weight="700" fill="#7A5A20">医療日誌</text>
+            <text x="680" y="721" text-anchor="middle" font-size="10.5" fill="#A0803C">十一年分</text>
+          </g>
+          <g>
+            <rect x="802" y="678" width="128" height="56" rx="3" fill="#FFF7E8" stroke="#B0873C" stroke-width="1.3"/>
+            <text x="866" y="702" text-anchor="middle" font-weight="700" fill="#7A5A20">木のスプーン</text>
+            <text x="866" y="721" text-anchor="middle" font-size="10.5" fill="#A0803C">先に預けた</text>
+          </g>
+        </g>
+        <text x="470" y="772" text-anchor="middle" font-family="Shippori Mincho B1, serif" font-size="13" fill="#5B7183" letter-spacing="3">——五年後、これらはすべて、湖ごと海へ流れ出す</text>
+      </svg>
+    </div>
+    <p class="cap"><b>図04.</b> チディ・オコンクウォだけは、上段に「失った人」がいない。彼の線は上から下へ通っているのではなく、下から先に伸びている。順番が来る前に、彼は預けた。<br>そしてエレナ・パヴロヴナだけが、詩の中で唯一の接続詞「<b>または</b>」を割り当てられている。これは景色ではない。<b>分岐そのものだ。</b>沈まない太陽か、開けない夜か——選ばなければならない位置に、彼女だけが立っている。</p>
+
+    <p class="eyebrow">Fig. 05 ／ 時空</p>
+    <h2>この物語が占める時間</h2>
+    <p class="lede">本編は十七の節からなり、そのうち六節は二〇二六年の外側にある。最古の節は千五百万年前、最新の節は千五百万年後。人間五人が越冬した二百五十日は、下の図では線としても描けない。</p>
+    <div class="fig fig-scroll">
+      <svg viewBox="0 0 940 420" role="img" aria-label="物語の時間スケール図。1500万年前から1500万年後まで">
+        <rect width="940" height="420" fill="#F3F7FA"/>
+        <line x1="60" y1="230" x2="880" y2="230" stroke="#3E566A" stroke-width="1.6"/>
+        <text x="60" y="270" font-family="IBM Plex Mono, monospace" font-size="10" fill="#93A7B6">&#8592; PAST</text>
+        <text x="880" y="270" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="#93A7B6">FUTURE &#8594;</text>
+        <text x="60" y="56" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#93A7B6" letter-spacing="2">LOG SCALE &#8212; 中央 2026年、両側へ対数</text>
+        <g font-family="Zen Kaku Gothic New, sans-serif" font-size="11.5">
+          <line x1="90" y1="200" x2="90" y2="230" stroke="#2E8C8C" stroke-width="2"/><circle cx="90" cy="200" r="4" fill="#2E8C8C"/>
+          <text x="90" y="188" text-anchor="middle" fill="#1F5F5F" font-weight="700">&#8722;15,000,000</text>
+          <text x="90" y="172" text-anchor="middle" font-size="10.5" fill="#4E8E8E">第一節 最後の光</text>
+          <text x="90" y="157" text-anchor="middle" font-size="10" fill="#93A7B6">湖が閉じる</text>
+
+          <line x1="200" y1="210" x2="200" y2="230" stroke="#1E6F92" stroke-width="2"/><circle cx="200" cy="210" r="3.5" fill="#1E6F92"/>
+          <text x="200" y="198" text-anchor="middle" fill="#12202C">&#8722;720,000</text>
+          <text x="200" y="183" text-anchor="middle" font-size="10" fill="#5B7183">第四節 降る</text>
+
+          <line x1="290" y1="256" x2="290" y2="230" stroke="#1E6F92" stroke-width="2"/><circle cx="290" cy="256" r="3.5" fill="#1E6F92"/>
+          <text x="290" y="274" text-anchor="middle" fill="#12202C">&#8722;25,000</text>
+          <text x="290" y="289" text-anchor="middle" font-size="10" fill="#5B7183">第六節 氷期の空</text>
+
+          <line x1="378" y1="210" x2="378" y2="230" stroke="#1E6F92" stroke-width="2"/><circle cx="378" cy="210" r="3.5" fill="#1E6F92"/>
+          <text x="378" y="198" text-anchor="middle" fill="#12202C">2012</text>
+          <text x="378" y="183" text-anchor="middle" font-size="10" fill="#5B7183">第八節 三十八秒</text>
+
+          <rect x="432" y="140" width="46" height="180" fill="#D9A24A" opacity=".14"/>
+          <line x1="455" y1="140" x2="455" y2="320" stroke="#B0873C" stroke-width="2.4"/>
+          <circle cx="455" cy="230" r="6" fill="#B0873C"/>
+          <text x="455" y="128" text-anchor="middle" font-weight="700" fill="#7A5A20">2026</text>
+          <text x="455" y="112" text-anchor="middle" font-size="10.5" fill="#8A6B2E">第二・三・五・七・九〜十四節</text>
+          <text x="455" y="340" text-anchor="middle" font-size="10" fill="#A0803C">250日</text>
+          <text x="455" y="356" text-anchor="middle" font-size="9.5" fill="#A8B8C6">この図では幅を持てない</text>
+
+          <line x1="546" y1="256" x2="546" y2="230" stroke="#8B4646" stroke-width="2"/><circle cx="546" cy="256" r="3.5" fill="#8B4646"/>
+          <text x="546" y="274" text-anchor="middle" fill="#8B4646">2033&#8211;2049</text>
+          <text x="546" y="289" text-anchor="middle" font-size="10" fill="#A06565">第十五節 その後の五人</text>
+
+          <line x1="640" y1="210" x2="640" y2="230" stroke="#8B4646" stroke-width="2"/><circle cx="640" cy="210" r="4" fill="#8B4646"/>
+          <text x="640" y="198" text-anchor="middle" fill="#8B4646" font-weight="700">2056</text>
+          <text x="640" y="183" text-anchor="middle" font-size="10" fill="#A06565">第十六節 エルケ</text>
+          <text x="640" y="168" text-anchor="middle" font-size="9.5" fill="#93A7B6">排水網が見つかる</text>
+
+          <line x1="726" y1="256" x2="726" y2="230" stroke="#8B4646" stroke-width="2"/><circle cx="726" cy="256" r="3.5" fill="#8B4646"/>
+          <text x="726" y="274" text-anchor="middle" fill="#8B4646">2113</text>
+          <text x="726" y="289" text-anchor="middle" font-size="10" fill="#A06565">第十六節後半 決議</text>
+
+          <line x1="850" y1="200" x2="850" y2="230" stroke="#6B5B4A" stroke-width="2"/><circle cx="850" cy="200" r="4" fill="#6B5B4A"/>
+          <text x="850" y="188" text-anchor="middle" fill="#4A3E30" font-weight="700">+15,000,000</text>
+          <text x="850" y="172" text-anchor="middle" font-size="10.5" fill="#6B5B4A">第十七節 黒い海</text>
+          <text x="850" y="157" text-anchor="middle" font-size="10" fill="#93A7B6">氷床は存在しない</text>
+        </g>
+        <text x="880" y="400" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#93A7B6">五人の一生は、この軸上で 0.0000004 の幅を持つ</text>
+      </svg>
+    </div>
+    <p class="cap"><b>図05.</b> 五人が下した決断は、この軸の中央、幅を持てない一点で起きた。彼らはその一点から、両側へ千五百万年ずつ責任を負おうとした。<b>負えなかった。</b></p>
+  </div>
+</section>
+
+<!-- ============ 資料篇：人物 ============ -->
+<section class="mv mv-day" data-depth="0" data-tick="資料 ／ 人物">
+  <div class="wide">
+    <p class="eyebrow">Dramatis Personae</p>
+    <h2>越冬隊 五名</h2>
+    <p class="lede">選考基準は技能ではなく、まず「二百日、四人と口をきき続けられること」だった。だが実際に選ばれた五人のうち四人は、この場所を、口をきかなくていい場所として選んでいた。</p>
+
+    <div class="grid2">
+      <article class="who">
+        <div class="no">01 ／ DRILL ENGINEER</div>
+        <h3 class="nm" style="margin:0 0 2px;border:0;padding:0">本橋 汐里</h3>
+        <p class="ro">もとはし しおり ／ 41 ／ 日本</p>
+        <dl>
+          <dt>担当</dt><dd>掘削機構・ウインチ・孔内液管理</dd>
+          <dt>越冬歴</dt><dd>3回（うちドームΩ 2回）</dd>
+          <dt>経歴</dt><dd>海洋掘削の機械技師から転じて14年</dd>
+          <dt>抱えるもの</dt><dd>弟の留守番電話を、聞かずに消した</dd>
+          <dt>癖</dt><dd>作業台の氷を、必ず素手で一度触る</dd>
+        </dl>
+        <p class="q">「理屈としては、間違ってないんだけどね」</p>
+      </article>
+
+      <article class="who">
+        <div class="no">02 ／ CHIEF GLACIOLOGIST</div>
+        <h3 class="nm" style="margin:0 0 2px;border:0;padding:0">アンドレアス・ヴェルナー</h3>
+        <p class="ro">Andreas Werner ／ 63 ／ ドイツ</p>
+        <dl>
+          <dt>担当</dt><dd>層序解析・年代決定・掘削計画</dd>
+          <dt>越冬歴</dt><dd>14回（南極通算 8年2か月）</dd>
+          <dt>経歴</dt><dd>2004年、この地点のアイスレーダー測量を実施</dd>
+          <dt>抱えるもの</dt><dd>六年間、開けていない封筒</dd>
+          <dt>目的</dt><dd>百五十万年前の氷。三十年の全部</dd>
+        </dl>
+        <p class="q">「時間を掘っている人間は、自分の時間を使っていることに気づかない」</p>
+      </article>
+
+      <article class="who">
+        <div class="no">03 ／ COMMUNICATIONS</div>
+        <h3 class="nm" style="margin:0 0 2px;border:0;padding:0">キム・ハウン</h3>
+        <p class="ro">김하은 ／ 29 ／ 韓国</p>
+        <dl>
+          <dt>担当</dt><dd>衛星回線・観測データ伝送・気象</dd>
+          <dt>越冬歴</dt><dd>1回（初越冬）</dd>
+          <dt>経歴</dt><dd>極地研の通信技官。父は釜山の船具店主</dd>
+          <dt>抱えるもの</dt><dd>自分宛ての訃報を、十一週間ひとりで持った</dd>
+          <dt>職務</dt><dd>他人の家族の死を、最初に読む役</dd>
+        </dl>
+        <p class="q">「ノックする係が、わたしだったので」</p>
+      </article>
+
+      <article class="who">
+        <div class="no">04 ／ STATION LEADER ・ MD</div>
+        <h3 class="nm" style="margin:0 0 2px;border:0;padding:0">エレナ・パヴロヴナ</h3>
+        <p class="ro">Елена Павловна ／ 48 ／ ロシア</p>
+        <dl>
+          <dt>担当</dt><dd>越冬隊長・医療・安全管理</dd>
+          <dt>越冬歴</dt><dd>5回</dd>
+          <dt>経歴</dt><dd>2015年、別基地で隊員一名を失う。調査委は無過失と結論</dd>
+          <dt>抱えるもの</dt><dd>毎朝書く、六人目の欄</dd>
+          <dt>信条</dt><dd>「九割が同じ判断をした」では足りない</dd>
+        </dl>
+        <p class="q">「あの人の名前を書く人間が、この世に一人もいなくなる日まで」</p>
+      </article>
+
+      <article class="who" style="grid-column:1/-1">
+        <div class="no">05 ／ COOK</div>
+        <h3 class="nm" style="margin:0 0 2px;border:0;padding:0">チディ・オコンクウォ</h3>
+        <p class="ro">Chidi Okonkwo ／ 38 ／ ナイジェリア</p>
+        <dl>
+          <dt>担当</dt><dd>調理・食料管理・雪上車副操縦</dd>
+          <dt>越冬歴</dt><dd>1回（初越冬）</dd>
+          <dt>経歴</dt><dd>ラゴス出身。北海の洋上基地の厨房を12年。35歳で初めて雪を見た</dd>
+          <dt>抱えるもの</dt><dd>——なし。それが、この基地では異常だった</dd>
+          <dt>持ち物</dt><dd>柄の焦げた木のスプーン（母のもの）</dd>
+        </dl>
+        <p class="q">「まだ何も失ってないから、分からないよ。でもさ、順番が来るだけだよな」</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 資料篇：年表 ============ -->
+<section class="mv mv-day" data-depth="0" data-tick="資料 ／ 年表">
+  <div class="wide">
+    <p class="eyebrow">Chronology</p>
+    <h2>年表</h2>
+    <div class="grid2">
+      <div>
+        <h3 style="margin-top:22px">計画と、それぞれの年</h3>
+        <ul class="tl">
+          <li><span class="yr">1996</span><span class="ev">ドームΩ計画、国際共同事業として発足<small>アンドレアス33歳。娘ヘルガ4歳。出発の朝、玄関で片方だけ靴下を履いて泣いていた</small></span></li>
+          <li class="key"><span class="yr">2004</span><span class="ev">アンドレアス、当該地点のアイスレーダー測量を実施<small>氷厚を 3,080 m ± 40 と推定。この誤差が二十二年後に効く</small></span></li>
+          <li><span class="yr">2008</span><span class="ev">パイロット孔（〜120 m）掘削開始</span></li>
+          <li><span class="yr">2012</span><span class="ev">深層掘削開始。深度 400 m 到達<small>同年3月、本橋拓海が死亡。汐里30歳。着信履歴に「0:38」だけが残る</small></span></li>
+          <li><span class="yr">2015</span><span class="ev">別基地でヴァレンチン・ソコロフ死亡<small>エレナ、以後十一年にわたり彼の欄を書き続ける</small></span></li>
+          <li><span class="yr">2018</span><span class="ev">深度 2,000 m 突破。ヴェルナー、退官延長を申請</span></li>
+          <li class="key"><span class="yr">2020</span><span class="ev">ヘルガ、父に手紙を出す<small>「女の子でした。名前はエルケ」——アンドレアスはこれを六年間開けない</small></span></li>
+          <li><span class="yr">2024</span><span class="ev">深度 2,860 m。氷厚推定まで残り約 220 m</span></li>
+          <li class="key"><span class="yr">2026</span><span class="ev">第三十次越冬隊、5名で越冬入り<small>ここから下は、日ごとの記録になる</small></span></li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-top:22px">第三十次越冬（2026年）</h3>
+        <ul class="tl">
+          <li><span class="yr">02.14</span><span class="ev">最終航空便が沿岸拠点を離脱。以後、脱出手段なし</span></li>
+          <li><span class="yr">03.01</span><span class="ev">越冬成立。掘削再開、深度 2,884 m</span></li>
+          <li><span class="yr">04.06</span><span class="ev">極夜開始（日の出なし・137日間）</span></li>
+          <li><span class="yr">06.03</span><span class="ev">キム・ヨンス死去の報、通信室に着信<small>受信・記録・整理をすべてハウン本人が行う</small></span></li>
+          <li><span class="yr">06.28</span><span class="ev">深度 3,000 m 到達。祝いにチディがパンを焼く</span></li>
+          <li class="key"><span class="yr">07.12</span><span class="ev">03:22 貫通。氷厚 3,041 m<small>想定より 39 m 浅い。孔内掘削液が氷床底面湖へ流入</small></span></li>
+          <li><span class="yr">07.12</span><span class="ev">12:40 五名による無記名投票<small>結果 3・3・3・3・3</small></span></li>
+          <li><span class="yr">07.12</span><span class="ev">12:51 衛星窓、本部へ第一報</span></li>
+          <li class="key"><span class="yr">07.20–31</span><span class="ev">熱水プラグによる永久封鎖作業（11日間）<small>7日目、投下</small></span></li>
+          <li class="key"><span class="yr">08.22</span><span class="ev">日の出。地平線上 1分32秒</span></li>
+          <li><span class="yr">11.09</span><span class="ev">越冬隊、沿岸拠点へ向け出発</span></li>
+          <li><span class="yr">2056</span><span class="ev">エルケ・ヴェルナー（36）、跡地に立つ<small>掘らない</small></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 資料篇：設定 ============ -->
+<section class="mv mv-day" data-depth="0" data-tick="資料 ／ 諸元">
+  <div class="wide">
+    <p class="eyebrow">Specifications</p>
+    <h2>基地・掘削・環境</h2>
+
+    <div class="grid2">
+      <div>
+        <h3 style="margin-top:22px">基地諸元</h3>
+        <table class="tbl">
+          <tr><th>名称</th><td>ドームΩ基地（Dome Ω Station）</td></tr>
+          <tr><th>位置</th><td class="m">77°41′S 41°18′E</td></tr>
+          <tr><th>標高</th><td class="m">3,810 m（気圧高度 約4,700 m 相当）</td></tr>
+          <tr><th>建屋</th><td>5棟・高床式・4年ごとにジャッキアップ</td></tr>
+          <tr><th>越冬定員</th><td>5名（夏期最大 22名）</td></tr>
+          <tr><th>電力</th><td>ディーゼル発電 3基（2基冗長運転）</td></tr>
+          <tr><th>燃料備蓄</th><td class="m">380 kL（越冬所要の 1.6 倍）</td></tr>
+          <tr><th>通信</th><td>極軌道衛星。1日 4回、各 22〜38分の窓</td></tr>
+          <tr><th>医療</th><td>医師1名。外科手術は虫垂・骨折まで</td></tr>
+          <tr><th>脱出</th><td>2月中旬〜11月上旬は不可能</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3 style="margin-top:22px">気象</h3>
+        <table class="tbl">
+          <tr><th>年平均気温</th><td class="m">−54.4 ℃</td></tr>
+          <tr><th>越冬期最低</th><td class="m">−79.8 ℃（第三十次・7月9日）</td></tr>
+          <tr><th>夏期最高</th><td class="m">−22.1 ℃</td></tr>
+          <tr><th>年間堆積量</th><td class="m">水換算 27 mm（＝雪で約 3 cm）</td></tr>
+          <tr><th>卓越風</th><td class="m">北東 4.6 m/s（内陸のため弱い）</td></tr>
+          <tr><th>極夜</th><td class="m">4月6日〜8月22日（137日）</td></tr>
+          <tr><th>白夜</th><td class="m">10月25日〜2月17日（115日）</td></tr>
+          <tr><th>相対湿度</th><td class="m">実効 0〜3 %（地上で最も乾いた場所のひとつ）</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h3>掘削諸元</h3>
+    <table class="tbl">
+      <tr><th>孔名</th><td class="m">Ω-1</td></tr>
+      <tr><th>方式</th><td>電気機械式ドリル・液封孔（wireline）</td></tr>
+      <tr><th>孔径 ／ コア径</th><td class="m">132 mm ／ 94 mm</td></tr>
+      <tr><th>1回の取得長</th><td class="m">3.6 m（上げ下げ往復に深度3,000 mで約4時間）</td></tr>
+      <tr><th>孔内液</th><td>低温用ケロシン系＋比重調整剤。孔の圧潰を防ぐため氷と等圧に保つ</td></tr>
+      <tr><th>孔内液総量</th><td class="m">約 27,000 L</td></tr>
+      <tr><th>掘削開始</th><td>2012年（パイロット孔は2008年）</td></tr>
+      <tr><th>到達深度</th><td class="m">3,041 m（2026年7月12日 03:22）</td></tr>
+      <tr><th>回収コア</th><td class="m">2,884 本 ／ 未回収区間 3,035–3,041 m</td></tr>
+      <tr><th>最終処置</th><td>熱水プラグによる全長永久封鎖（2026年7月31日完了）</td></tr>
+    </table>
+
+    <h3>氷床底面湖「Ω湖」</h3>
+    <table class="tbl">
+      <tr><th>種別</th><td>氷床底面湖（subglacial lake）。氷の重みと地熱で底面が融け、閉じ込められた水塊</td></tr>
+      <tr><th>推定面積</th><td class="m">約 40 km²</td></tr>
+      <tr><th>推定水深</th><td class="m">60〜110 m</td></tr>
+      <tr><th>推定隔離期間</th><td class="m">1,500万年以上</td></tr>
+      <tr><th>水温 ／ 圧力</th><td class="m">−2.6 ℃（融点降下）／ 約 300 気圧</td></tr>
+      <tr><th>生物</th><td>未確認。同種の湖では化学合成微生物群集の存在が示唆されている</td></tr>
+      <tr><th>法的枠組</th><td>環境保護に関する南極条約議定書。加えて「氷床下水環境に関する行動規範」が、清浄性の確保できない接触を禁じる</td></tr>
+    </table>
+
+    <h3>用語</h3>
+    <dl class="gl">
+      <div><dt>アイスコア<span>ice core</span></dt><dd>氷床を円筒状にくり抜いた試料。降った雪がそのまま圧縮されているため、過去の気温・降水・火山噴火・大気組成が層になって残る。</dd></div>
+      <div><dt>気泡閉塞深度<span>BCO ／ 深度100 m前後</span></dt><dd>雪が氷になり、空気の通り道が塞がる深さ。これより深い氷の泡は、その年の大気そのものが密封されている。氷が「空気の缶詰」と呼ばれる理由。</dd></div>
+      <div><dt>ドーム<span>dome</span></dt><dd>氷床が最も高く盛り上がり、横方向の流動がほぼゼロになる点。地層が乱れないため、最古の氷を得るには必ずドームを狙う。</dd></div>
+      <div><dt>孔内液<span>drilling fluid</span></dt><dd>深い孔は氷の圧力で数時間で潰れる。それを防ぐために孔を満たす液体。<b>孔を開けておくために必要で、下を汚さないためには邪魔なもの。</b></dd></div>
+      <div><dt>再結晶氷<span>深度2,800 m以深</span></dt><dd>圧力と時間で結晶が数センチまで成長し、年層の境目が消えた氷。年代は物理モデルでしか推定できない。</dd></div>
+      <div><dt>熱水プラグ<span>hot-water plug</span></dt><dd>孔に熱水を注いで区間ごとに凍結させ、氷の栓を作る封鎖工法。孔は物理的に消滅し、二度と使えない。</dd></div>
+      <div><dt>衛星窓<span>satellite window</span></dt><dd>極軌道衛星が地平線上にある時間帯。ドームΩでは1日4回、最短22分。この窓の外では、基地は世界のどこともつながっていない。</dd></div>
+    </dl>
+
+    <h3>この物語の取り扱いについて</h3>
+    <p style="max-width:70ch;font-size:15px">
+      ドームΩ基地、Ω湖、および登場人物はすべて架空です。一方で、氷床コアの原理、気泡閉塞深度、孔内液の必要性、氷床底面湖の存在と汚染への懸念、南極条約体制下での環境保護の枠組みは、いずれも実在の科学と制度に基づいています。<br><br>
+      現実の南極では、氷床下の湖への到達は各国が慎重に検討を続けている段階にあり、清浄掘削技術の確立が前提とされています。この物語は、その慎重さがなぜ必要かを、五人の人間の側から書いたものです。
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     本編
+     ============================================================ -->
+
+<section class="mv mv-void" data-depth="0" data-year="2026">
+  <div class="wrap"><p class="divider">SEVENTEEN MOVEMENTS ／ 本編</p></div>
+</section>
+
+<!-- 第一節 -->
+<section class="mv mv-void inter" data-depth="3041" data-year="-15,000,000" data-tick="一 ／ −15Ma">
+  <p class="inter-when">15,000,000 YEARS BEFORE</p>
+  <p class="inter-where">のちにΩ湖と呼ばれる水面 ／ 最後の光</p>
+  <p class="refrain">
+    まだ誰も来ない白銀の大地<br>
+    まだ凍りきらない空気<br>
+    沈まない太陽<br>
+    <em>または</em>
+    まだ始まらない夜
+  </p>
+  <div class="inter-body">
+    <p>そのとき、水はまだ空を見ていた。</p>
+    <p>南半球の高緯度に、浅い湖があった。まわりには低い針葉樹があり、岸には小さな哺乳類の足跡があった。夏には日が沈まず、水面は二十時間、白く光り続けた。</p>
+    <p>気候が変わりはじめたのは、それから数十万年かけてのことだ。雪が、降った量だけ融けなくなった。翌年の雪が、前年の雪の上に乗った。その上に、また乗った。</p>
+    <p>湖は、上から蓋をされていった。</p>
+    <p>最後の光が水面に届いた日を、正確に指すことはできない。ある夏の終わりに、雪の層の隙間から差し込んでいた薄い青が、翌年には差し込まなくなった。それだけのことだ。誰も見ていない。見る目がまだ存在しない。</p>
+    <p>以後、この水の上には、千五百万年ぶんの夜が積もった。</p>
+    <p>三千四十一メートルの、開けない夜が。</p>
+  </div>
+</section>
+
+<!-- 第二節 -->
+<section class="mv mv-night" data-depth="0" data-year="2026" data-tick="二 ／ 0 m">
+  <div class="wrap">
+    <article class="chap">
+      <header class="chap-head">
+        <span class="chap-d">MOVEMENT 02 ／ DEPTH 0 m ／ 2026.03.01</span>
+        <h2 class="chap-t">越冬成立</h2>
+        <p class="chap-s">五人が、世界から切り離された日</p>
+      </header>
+      <div class="prose">
+        <p class="verse">誰もいない白銀の大地<br>すべてが凍てつく空気<br>沈まない太陽<br>または<br>開けない夜</p>
+
+        <p>ドームΩ基地の内玄関に、その五行が貼ってある。誰が書いたものかは分からない。基地が建った年からあったとも、三代前の越冬隊長が余った測量野帳の裏に書いたとも言われている。紙は日焼けすらしないまま、ただ乾いて縮んでいた。ここでは紙は腐らない。腐るには湿気がいるが、この場所の相対湿度は、実効でゼロに近い。</p>
+
+        <p>南緯七十七度四十一分、標高三千八百十メートル。年間の降雪は、水にして二十七ミリに満たない。ここでは雪は「積もる」というより「堆積する」。一年が三センチ。人ひとりの一生が、せいぜい五十センチ。</p>
+
+        <p>そして基地の真下には、深さ三千メートル近い穴が開いている。三十年かけて開けた穴だ。</p>
+
+        <p>越冬隊は五人だった。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>三月一日をもって、この基地は世界から切り離される。二月十四日に最終便が沿岸を離れ、以後十一月まで、地上にも空にも、ここへ到達する手段は存在しない。誰かが倒れても、誰かが壊れても、飛行機は来ない。それを全員が承知の上でここにいる。</p>
+
+        <p>その日の夕食で、越冬隊長のエレナ・パヴロヴナは短い挨拶をした。ロシア語の癖が残る、平坦な英語だった。</p>
+
+        <p>「わたしたちは今日から二百五十日、五人です。わたしは毎朝、皆さんの体温と血圧を測ります。断らないでください。それだけが、わたしの仕事です」</p>
+
+        <p>「それだけ?」とチディが訊いた。</p>
+
+        <p>「それだけです。あとは、皆さんが自分でやってください」</p>
+
+        <p>誰も笑わなかったが、悪い空気ではなかった。アンドレアス・ヴェルナーは、皿の縁をフォークで軽く二度叩いてから言った。</p>
+
+        <p>「深度二千八百八十四。残り、たぶん二百メートル弱だ。この冬で、底に着く」</p>
+
+        <p>底に着く、という言葉が、食堂の空気を少し変えた。三十年続いた計画に、終わりという概念が入ったのは、その夜が最初だった。</p>
+
+        <p>汐里は、スープの表面が湯気を立てているのを見ていた。標高三千八百メートルでは水は八十七度で沸く。何年やっても、この基地のスープはぬるい。</p>
+
+        <p>玄関の五行を、彼女はその夜も通りすがりに見た。十四年で何千回見たか分からない。ただその夜だけ、五行が五人ぶんに見えた。誰にどれが当たるのだろう、と一瞬考えて、すぐに考えるのをやめた。</p>
+
+        <p>当たっていた。</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 第三節 -->
+<section class="mv mv-night" data-depth="6" data-year="2026" data-tick="三 ／ 6 m">
+  <div class="wrap">
+    <article class="chap">
+      <header class="chap-head">
+        <span class="chap-d">MOVEMENT 03 ／ DEPTH 6 m ／ 約200年前の空気</span>
+        <h2 class="chap-t">本橋 汐里</h2>
+        <p class="chap-s">三十八秒</p>
+        <p class="chap-line">すべてが凍てつく空気</p>
+      </header>
+      <div class="prose">
+        <p>汐里は掘削技師だった。四十一歳。この基地でいちばん、氷を手で触る仕事をしている。</p>
+
+        <p>深層コアの合間に、彼女は基地の裏手で浅層コアを掘る。表層の雪の密度を測るための、地味な作業だ。直径十センチ、長さ一メートルの円筒を、順番に引き上げていく。深層掘削のような大仕掛けはいらない。手回しに近い機械と、腕でいい。</p>
+
+        <p>六本目の筒を作業台に置いたとき、汐里は手を止めた。</p>
+
+        <p>氷の中に、細かい泡が散っていた。白い、砂粒のような泡。それは雪が氷に変わるときに閉じ込められた、空気だ。閉じ込められたまま、動かない。</p>
+
+        <p>すべてが凍てつく空気、と彼女は思った。玄関の三行目だ。いや、二行目か。</p>
+
+        <p>深度六メートル。この基地の堆積率で言えば、およそ二百年前。ナポレオンがまだ生きていた頃の空気だ。</p>
+
+        <p>——だが汐里が思い浮かべたのは、いつも同じ年だった。</p>
+
+        <p>二〇一二年。弟の拓海が死んだ年。二十六歳。汐里が三十歳のとき。</p>
+
+        <p>あの年の三月に、彼から留守番電話が入っていた。汐里は現場に出ていて、あとで聞こうと思って、そのまま三日忘れた。三日後、聞く前に消した。消したのは意図的ではない。着信一覧を親指でなぞっていて、指が滑った。それだけだ。</p>
+
+        <p>着信履歴だけが残っていて、そこには「拓海 21:44 通話時間 0:38」とあった。</p>
+
+        <p>三十八秒。</p>
+
+        <p>何を言おうとしたのか、汐里は一生知らない。</p>
+
+        <p>三十八秒ぶんの空気を、彼は動かした。喉を震わせ、口から出して、部屋の空気を押した。その空気はどこにも消えない。散って、混ざって、薄まって、風に乗って、地球を何周かして、そのうちのごく一部は、南極の高原に雪として降る。</p>
+
+        <p>理屈としては、間違っていない。ただ、量が話にならない。彼の三十八秒が地球全体の大気に薄まったあと、直径十センチの氷筒に入る量は、原子数個ぶんもないだろう。汐里は計算したことがある。二回。答えは二回とも「ない」だった。</p>
+
+        <p>「そんなわけないってことは、分かってるんだけどね」</p>
+
+        <p>一度だけ、彼女はチディにそう言った。厨房の湯気の中で。チディは玉ねぎを刻む手を止めずに答えた。</p>
+
+        <p>「理屈が正しいかどうかで、人は生きてないよ」</p>
+
+        <p>「そういうの、南極で言われると効くね」</p>
+
+        <p>「南極じゃなくても効く。俺は結構いいこと言う」</p>
+
+        <p>汐里は笑った。この冬、はじめて声を出して笑った。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>彼女がこの仕事を続けている理由を、正確に言うのは難しい。氷は、その年の空気を丸ごと保存する。人間はしない。人間は消す。指が滑って、消す。</p>
+
+        <p>だから彼女は、消さないものの側で働きたかった。</p>
+
+        <p>それだけの話だった。</p>
+
+        <p>——のちに、彼女は自分が間違っていたことを知る。氷も、消す。ただ、人間よりだいぶ気の長いやり方で消すというだけだ。</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 第四節 -->
+<section class="mv mv-void inter" data-depth="3000" data-year="-720,000" data-tick="四 ／ −720ka">
+  <p class="inter-when">720,000 YEARS BEFORE</p>
+  <p class="inter-where">のちに深度3,000メートルになる雪 ／ 降る</p>
+  <p class="refrain">
+    誰もいない白銀の大地<br>
+    まだ名前のない空気<br>
+    沈まない太陽<br>
+    <em>または</em>
+    開けない夜
+  </p>
+  <div class="inter-body">
+    <p>雪が降った。</p>
+    <p>その年、この高原に降った雪は、水にして二十九ミリだった。二〇二六年とほとんど変わらない。この場所の降り方は、七十万年のあいだ、ほとんど変わっていない。それがこの場所の価値だった。</p>
+    <p>降ったときの雪の粒には、空気の隙間が六十パーセントあった。翌年の雪がその上に乗り、隙間は五十五パーセントになった。百年で四十。千年で二十。二千七百年目、深さ百メートルのあたりで、隙間はついに互いにつながらなくなった。</p>
+    <p>そこで、空気は閉じ込められた。</p>
+    <p>閉じ込められた空気の中には、その年の地球のすべてが入っている。火山が吐いたもの。森が吸ったもの。海が返したもの。二酸化炭素は二百四十二 ppm。当時、地球上のどこにも、それを測ろうとする生き物はいなかった。</p>
+    <p>その空気は、以後七十万年、動かなかった。</p>
+    <p>二〇二六年六月二十八日、それは直径九十四ミリの円筒として、地上に引き上げられた。</p>
+    <p>その夜、五人はパンを食べた。</p>
+    <p>そのパンを焼くために燃やされた燃料が出した二酸化炭素の量は、引き上げられた氷が保存していた七十万年前の空気の、およそ四千倍だった。</p>
+    <p>誰もその計算はしなかった。</p>
+  </div>
+</section>
+
+<!-- 第五節 -->
+<section class="mv mv-night" data-depth="700" data-year="2026" data-tick="五 ／ 700 m">
+  <div class="wrap">
+    <article class="chap">
+      <header class="chap-head">
+        <span class="chap-d">MOVEMENT 05 ／ DEPTH 700 m ／ 約2万5千年前の空気</span>
+        <h2 class="chap-t">アンドレアス・ヴェルナー</h2>
+        <p class="chap-s">緑色の靴下</p>
+        <p class="chap-line">誰もいない白銀の大地</p>
+      </header>
+      <div class="prose">
+        <p>アンドレアスは六十三歳で、この穴に三十年を注いだ男だった。</p>
+
+        <p>彼が最初にこの高原に立ったのは三十三歳のときだ。そのとき娘のヘルガは四つで、彼が発つ日に、玄関で靴下を片方だけ履いて泣いていた。彼はその靴下のことを、三十年間、正確に覚えている。緑色で、かかとに小さな穴が開いていた。</p>
+
+        <p>その後の三十年で、彼は南極で十四回冬を越した。南極通算八年二か月。娘の入学式、卒業式、結婚式。すべて氷の下にいた。妻とは十九年目に別れた。彼女は責めなかった。責めないという方法で、彼を正確に終わらせた。</p>
+
+        <p>誰もいない白銀の大地。それが彼の行に当たった一行だった。三十年、彼は誰もいない場所を選び続けた。誰もいないから、そこには答えがあると思っていた。</p>
+
+        <p>「わたしは、時間を掘っているつもりだった」</p>
+
+        <p>彼は越冬中の講義でそう言うのが好きだった。月に一度、食堂で、四人を相手に一時間喋る。それが彼の唯一の趣味だった。</p>
+
+        <p>「深度七百メートルの氷は、およそ二万五千年前。最終氷期最盛期の空気だ。当時の二酸化炭素濃度は百九十 ppm。今の半分以下だよ。海面は今より百二十メートル低かった。人類はまだ、洞窟に絵を描いていた」</p>
+
+        <p>彼はスクリーンに、細い氷の柱の写真を出した。透明で、内側に白い霧のような泡の帯がある。</p>
+
+        <p>「この泡ひとつが、その年の空気だ。ひと粒に、だいたい〇・〇〇三ミリリットル。この一本の中に、二万五千年前の地球の呼吸が、二百年ぶん入っている」</p>
+
+        <p>ハウンが手を挙げた。「それを、吸えますか」</p>
+
+        <p>「吸える。分析装置は、実際には破砕して吸っているようなものだ」アンドレアスは少し笑った。「わたしはこの三十年、死んだ地球の息を、機械に嗅がせて生きてきた」</p>
+
+        <p>「変な言い方ですね」</p>
+
+        <p>「変な仕事だからね」</p>
+
+        <p>その夜、彼は最後にこう言った。</p>
+
+        <p>「時間を掘っている人間は、自分の時間を使っていることに気づかない」</p>
+
+        <p>誰も笑わなかった。エレナだけが、彼の顔を長く見ていた。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>彼のポケットには、六年前から開けていない封筒が入っていた。</p>
+
+        <p>差出人はヘルガ。彼女からの手紙は、二〇二〇年のそれが最後だった。以来、彼女は何も送ってこない。彼も何も送っていない。</p>
+
+        <p>開ければ何が書いてあるか分かってしまう。開けなければ、まだ何も終わっていない。彼は、そういう論法で六年を過ごした。六十三歳の氷床学者が、である。</p>
+
+        <p>彼の目標は明確だった。深度三千八十メートル前後にあるはずの氷床底面。その手前、最後の数十メートルに、極端に圧縮された古い層がある。そこに百五十万年前の氷がある——彼はそう計算した。</p>
+
+        <p>百五十万年前。地球の気候が、四万年周期から十万年周期へ乗り換えた時代。理由は誰も知らない。氷が知っている。</p>
+
+        <p>三十年かけて、あと百五十メートルだった。</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 第六節 -->
+<section class="mv mv-void inter" data-depth="700" data-year="-25,000" data-tick="六 ／ −25ka">
+  <p class="inter-when">25,000 YEARS BEFORE</p>
+  <p class="inter-where">最終氷期最盛期の空 ／ 氷期の空</p>
+  <p class="refrain">
+    誰もいない白銀の大地<br>
+    すべてが凍てつく空気<br>
+    <em>——太陽は同じだった</em>
+    誰も見ていない夜
+  </p>
+  <div class="inter-body">
+    <p>二万五千年前、この地点の上空は、いまより十度寒かった。</p>
+    <p>海面は百二十メートル低く、大陸は今より広かった。北半球には三キロの厚さの氷が乗り、そこにも、それを測る者はいなかった。</p>
+    <p>ただし、人間はいた。</p>
+    <p>南半球の海を挟んだ向こうで、誰かが火を焚いていた。誰かが、洞窟の壁に馬を描いていた。誰かが、死んだ子どもに赤い土をかけていた。二万五千年前にも、人は誰かを埋めていた。</p>
+    <p>その息も、その火の煙も、風に乗り、薄まり、南へ流れ、この高原に降った。深度七百メートルの氷の中に、原子数個ぶん、たしかに入っている。</p>
+    <p>汐里の計算は、正しかった。</p>
+    <p>そして意味がなかった。</p>
+    <p>正しさと意味は、この物語では最後まで別の場所にある。</p>
+  </div>
+</section>
+
+<!-- 第七節 -->
+<section class="mv mv-night" data-depth="1600" data-year="2026" data-tick="七 ／ 1,600 m">
+  <div class="wrap">
+    <article class="chap">
+      <header class="chap-head">
+        <span class="chap-d">MOVEMENT 07 ／ DEPTH 1,600 m ／ 約9万年前の空気</span>
+        <h2 class="chap-t">キム・ハウン</h2>
+        <p class="chap-s">ノックする係</p>
+        <p class="chap-line">開けない夜</p>
+      </header>
+      <div class="prose">
+        <p>ハウンは二十九歳で、通信担当だった。</p>
+
+        <p>この基地で最も残酷な仕事は、実は通信担当が担っている。家族からの緊急連絡は、まず通信室に入る。誰かの親が倒れた、誰かの子が生まれた、誰かの犬が死んだ。ハウンはそれを最初に読み、そして、その人の部屋のドアをノックしに行く。</p>
+
+        <p>衛星の窓は、一日に四回。最短で二十二分。その二十二分のあいだに、観測データを送り、気象を受け、本部の指示を受け、五人ぶんの私信を受け取る。ハウンは窓の時刻を、越冬期間ぜんぶ暗記していた。</p>
+
+        <p>越冬の四か月目、極夜の底で、彼女は自分宛ての一通を受け取った。</p>
+
+        <p class="doc">FROM: KIM SEO-YEON
+SUBJ: 아버지
+아빠가 오늘 새벽에 돌아가셨어. 심근경색이었대.
+급하게 병원 갔는데 이미. 언니 미안해.
+장례는 목요일. 오지 못하는 거 알아.</p>
+
+        <p>父が死んだ。心筋梗塞。搬送先で。享年六十一。釜山で船具店をやっていた。ロープと金具と、錆びた匂いのする店だった。</p>
+
+        <p>ハウンはその文面を三回読み、それから受信ログに整理番号を振り、私信フォルダに移し、次の観測データの送信に取りかかった。手順はすべて正しかった。彼女は自分が正しい手順を踏んでいることに、少し安心した。</p>
+
+        <p>その夜、誰も彼女の部屋をノックしなかった。ノックする役の人間が、彼女だったからだ。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>ハウンは十一週間、それを誰にも言わなかった。</p>
+
+        <p>言えば、迎えの飛行機の話になる。極夜の高原には飛行機は来ない。来ないと分かっている話をするのは、彼女には無意味に思えた。無意味に思える、と自分に言い聞かせることで、彼女は毎朝ちゃんと起きて、ちゃんと衛星の窓の時刻を計算し、ちゃんとみんなにメールを配った。</p>
+
+        <p>エレナの毎朝の診察も、問題なく通った。体温三十六度二分。血圧百六と六十八。睡眠時間、五時間半。彼女は嘘をつかなかった。ただ、訊かれなかったことを言わなかっただけだ。</p>
+
+        <p>十一週間。七十七日。そのあいだ、外は一度も明るくならなかった。</p>
+
+        <p>玄関の五行のうち、最後の一行が自分のものだと気づいたのは、五十日目くらいだったと思う。<b>開けない夜。</b>それは天文現象の話ではなかった。ノックがない、というだけの話だった。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>十一週間目の夜、チディが夕食に出したのは、牛の骨を長く煮たスープだった。</p>
+
+        <p>味は、まるで違っていた。骨も足りていないし、香りの立て方も違う。父が朝に作っていたものとは、似ても似つかなかった。父のはもっと白く濁っていて、塩は自分で足す決まりだった。</p>
+
+        <p>ハウンは、五口目でスプーンを置いて、両手で顔を覆った。</p>
+
+        <p>食堂は静かになった。誰も何も訊かなかった。汐里が黙って椅子を一つ横にずらして、彼女の隣に座った。エレナがそっと立ち上がって、厨房のコンロの火を止めた。アンドレアスは、目を伏せたまま、自分の皿のスープを最後まで飲んだ。</p>
+
+        <p>チディだけが、彼女の前に立って、こう言った。</p>
+
+        <p>「レシピ、教えてくれ。次はちゃんと作る」</p>
+
+        <p>ハウンは顔を覆ったまま、首を横に振った。それから、少しして、縦に振った。</p>
+
+        <p>翌朝、彼女の部屋のドアの下に、紙が一枚差し込まれていた。汐里の字で、こう書いてあった。</p>
+
+        <p class="doc">今日から、窓の時刻の計算は交代でやる。
+返事はいらない。異論は受け付けない。</p>
+
+        <p>七十八日目にして、初めてドアの側から何かが入ってきた。</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 第八節 -->
+<section class="mv mv-void inter" data-depth="6" data-year="2012" data-tick="八 ／ 38秒">
+  <p class="inter-when">2012.03.14 ／ 21:44:00 – 21:44:38</p>
+  <p class="inter-where">東京都板橋区・アパートの一室 ／ 三十八秒</p>
+  <p class="refrain">
+    誰もいない部屋<br>
+    すべてが凍てつく空気<br>
+    <em>——ここには太陽の話は出てこない</em>
+    開けない夜
+  </p>
+  <div class="inter-body">
+    <p>三十八秒のあいだに、この星では約三千五百人が死に、約四千七百人が生まれる。</p>
+    <p>その三十八秒に、本橋拓海は、姉の留守番電話に向かって話した。</p>
+    <p>何を話したかは、記録されていない。正確には、記録され、三日後に消去された。復元は試みられていない。汐里が試みなかったからだ。試みれば復元できたかもしれない、という可能性を、彼女は十四年間、開けない封筒のようにして持ち歩いた。</p>
+    <p>物理的には、こういうことが起きた。</p>
+    <p>彼の声帯が振動し、部屋の空気の分子が押された。押された分子は隣の分子を押した。窓の隙間から、その振動の名残が外へ出た。約〇・七ミリグラムぶんの、彼が肺から出した空気も一緒に出た。</p>
+    <p>その空気は、翌日には関東平野に散った。三週間で北半球に混ざった。一年半で赤道を越えた。二年で南半球の高緯度に届いた。</p>
+    <p>そして雪になった。</p>
+    <p>二〇二六年三月、本橋汐里は深度六メートルの浅層コアを作業台に置いた。その筒に含まれる二〇一二年由来の空気は、およそゼロだった。深度六メートルは二百年前の層で、二〇一二年の雪は、地表から二十センチほどの、まだ雪と呼べる場所にある。彼女は毎日その上を歩いていた。</p>
+    <p>毎日、踏んでいた。</p>
+    <p>気づかなかった。</p>
+    <p>これは比喩ではない。ただの、深度の話だ。</p>
+  </div>
+</section>
+
+<!-- 第九節 -->
+<section class="mv mv-night" data-depth="2400" data-year="2026" data-tick="九 ／ 2,400 m">
+  <div class="wrap">
+    <article class="chap">
+      <header class="chap-head">
+        <span class="chap-d">MOVEMENT 09 ／ DEPTH 2,400 m ／ 約25万年前の空気</span>
+        <h2 class="chap-t">エレナ・パヴロヴナ</h2>
+        <p class="chap-s">六人目の欄</p>
+        <p class="chap-line">または</p>
+      </header>
+      <div class="prose">
+        <p>エレナは四十八歳で、医師で、そして越冬隊長だった。</p>
+
+        <p>玄関の五行のうち、彼女に当たったのは景色ではなかった。真ん中の、たった三文字。<b>または。</b></p>
+
+        <p>沈まない太陽、または、開けない夜。どちらかを選べ、という意味ではない。詩を書いた誰かは、たぶんそんなつもりで書いていない。ただ、五行のうち一行だけが、風景ではなく分岐だった。そしてこの基地で分岐を引き受けるのは、いつも隊長だった。</p>
+
+        <p>彼女は毎朝、医療日誌を書く。五人ぶんの体温、血圧、酸素飽和度、睡眠時間。基地の医師なら誰でもやることだ。</p>
+
+        <p>ただ、彼女の日誌には六人目の欄があった。</p>
+
+        <p class="doc">ВАЛЕНТИН СОКОЛОВ  34
+体温 ———
+血圧 ———
+SpO₂ ———
+天候  快晴 −61.2℃ 風速 3.1 m/s</p>
+
+        <p>十一年前、別の基地で。腹痛。エレナは胃炎だと判断した。極夜で、輸送は不可能で、判断は必然的に賭けだった。血液検査の設備はなく、超音波はあったが、彼女の腕では虫垂は描出できなかった。三日後に虫垂が破れた。四日後に彼は死んだ。</p>
+
+        <p>調査委員会は彼女に非はないと結論した。報告書の中に、こういう一文があった。</p>
+
+        <p>「同条件下において、およそ九割の医師が同様の判断を行ったと推定される」</p>
+
+        <p>九割、という数字が、彼女を十一年苦しめた。</p>
+
+        <p>免責されたのだ、と誰もが言った。彼女にはそう聞こえなかった。九割の側にいた、と言われたのだ。残りの一割になれなかった、と。</p>
+
+        <p>だから彼女は毎朝、彼の名前を書く。体温の欄には斜線を引く。血圧の欄にも斜線を引く。そして下の空欄に、その日の天気を書く。彼が見られなかった日の天気を。</p>
+
+        <p>「それ、いつまで続けるつもり」</p>
+
+        <p>一度だけ、汐里が訊いた。深夜の医務室で、指の凍傷を診てもらっているときだった。エレナは万年筆のキャップを閉めながら答えた。</p>
+
+        <p>「あの人の名前を書く人間が、この世に一人もいなくなる日まで」</p>
+
+        <p>「それ、あなたが死ぬまでってことでは」</p>
+
+        <p>「そうです」</p>
+
+        <p>エレナは、汐里の指に軟膏を塗り終えて、手袋を外した。</p>
+
+        <p>「本橋さん。わたしはね、あの人を忘れないためにやっているんじゃないんです。わたしは彼のことをよく知らない。三か月しか一緒にいなかった。好きな音楽も知らない」</p>
+
+        <p>「じゃあ何のために」</p>
+
+        <p>「毎朝、判断を間違えた人間の顔を見るためです」エレナは自分の胸を軽く叩いた。「ここに一人いる。それを毎朝確認してから、わたしは皆さんの血圧を測りに行く」</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>越冬隊長という役職には、規程上、ひとつだけ特殊な権限がある。基地の存続に関わる事態において、本部との通信が確立できない場合、隊長は現場の裁量で最終決定を行える。</p>
+
+        <p>三十年の歴史で、その条項が使われたことは一度もなかった。</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 第十節 -->
+<section class="mv mv-night" data-depth="3000" data-year="2026" data-tick="十 ／ 3,000 m">
+  <div class="wrap">
+    <article class="chap">
+      <header class="chap-head">
+        <span class="chap-d">MOVEMENT 10 ／ DEPTH 3,000 m ／ 約65万年前の空気</span>
+        <h2 class="chap-t">チディ・オコンクウォ</h2>
+        <p class="chap-s">順番が来ていないだけ</p>
+        <p class="chap-line">沈まない太陽</p>
+      </header>
+      <div class="prose">
+        <p>チディは三十八歳で、調理担当で、そしてこの基地でただ一人、何も失っていない人間だった。</p>
+
+        <p>ラゴス出身。三十五歳まで雪を見たことがなかった。北海の洋上プラットフォームの厨房を十二年、渡り歩いた。四十人ぶんの飯を、揺れる床の上で作り続ける仕事だ。たまたま見つけた求人に応募して、たまたま採用された。</p>
+
+        <p>「なぜ南極に来た」と訊かれるたび、彼は同じことを言った。</p>
+
+        <p>「見たかったから」</p>
+
+        <p>その答えは、この基地ではひどく異質だった。</p>
+
+        <p>ここに来る人間は、たいてい何かから逃げてくる。あるいは、何かを埋めに来る。汐里も、アンドレアスも、ハウンも、エレナもそうだった。だから彼らは互いを一目で見分けられる。何も言わなくても分かる。この人も、あちら側だ、と。</p>
+
+        <p>チディだけが、見分けられなかった。</p>
+
+        <p>そのことが、彼を静かに孤独にしていた。</p>
+
+        <p>玄関の五行で言えば、彼は三行目だった。<b>沈まない太陽。</b>まだ夜が来ていない人。この基地では、それは幸運の名前ではなく、話が通じないことの名前だった。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>六月二十八日、深度三千メートルを超えた夜、彼はパンを焼いた。標高三千八百メートルではパンはうまく膨らまない。気圧が低いので発酵が暴れる。彼は二年かけて配合を直し、その夜ようやく、まともに膨らんだ一斤を出した。</p>
+
+        <p>四人は喜んだ。アンドレアスは二切れ食べた。</p>
+
+        <p>そのあと、汐里が皿を洗うのを手伝いにきたとき、チディは水を出しっぱなしにしたまま、こう言った。</p>
+
+        <p>「みんな、俺には話しかけやすいだろ」</p>
+
+        <p>「うん」</p>
+
+        <p>「でもさ、誰も俺には打ち明けないんだ。俺には分からないと思ってる」</p>
+
+        <p>汐里は答えなかった。事実だったからだ。</p>
+
+        <p>「分かるの?」と彼女は訊いた。</p>
+
+        <p>「分からないよ。まだ何も失ってないから」チディは笑った。「母親は生きてる。七十四で、まだ市場で怒鳴ってる。兄貴もいる。子どもはいないけど、いないだけだ。俺には、あんたらの持ってる重さがない」</p>
+
+        <p>「重い方がいいわけじゃない」</p>
+
+        <p>「そう。でもさ」彼は水を止めた。「順番が来るだけだよな。俺の番が来てないってだけだ」</p>
+
+        <p>汐里は、その言葉をずっと覚えていた。</p>
+
+        <p>「怖い?」</p>
+
+        <p>「怖いよ」チディは即答した。「めちゃくちゃ怖い。だから俺は、ここに来たときからずっと、あんたらを見てる。順番が来た人間が、そのあとどうやって飯を食うのか、見てる」</p>
+
+        <p>「参考になった?」</p>
+
+        <p>「なった」彼は言った。「あんたら、ちゃんと食うんだよな。それが一番びっくりした」</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 第十一節 -->
+<section class="mv mv-fluid" data-depth="3041" data-year="2026" data-tick="十一 ／ 貫通">
+  <div class="wrap">
+    <article class="chap">
+      <header class="chap-head">
+        <span class="chap-d">MOVEMENT 11 ／ DEPTH 3,041 m ／ 2026.07.12 03:22</span>
+        <h2 class="chap-t">貫通</h2>
+        <p class="chap-s">極夜 118日目</p>
+        <p class="chap-line">千五百万年ぶんの夜に、穴が開く</p>
+      </header>
+      <div class="prose">
+        <p>その夜、当直は汐里だった。</p>
+
+        <p>掘削は二十四時間動く。一回のコア取得に、深度三千メートルでは往復四時間かかる。ドリルを下ろし、三・六メートル削り、引き上げる。それを一日に五回か六回。単調で、退屈で、少しでも気を抜くと三十年が終わる仕事だ。</p>
+
+        <p>七月十二日、現地時間〇三時二十二分。</p>
+
+        <p>掘削機のトルクが落ちた。</p>
+
+        <p>汐里が最初に気づいた。氷を削る仕事には、手応えがある。何万時間ぶんの手応えが、彼女の指と、モニタの数値の両方に入っている。ドリルにかかる抵抗が消える。ワイヤーの張力が抜ける。削っている感触が、ふっと、なくなる。</p>
+
+        <p>そして掘削孔の圧力センサーが、上向きに振れた。</p>
+
+        <p>孔内の液圧が、下から押し返されている。</p>
+
+        <p>「——抜けた」</p>
+
+        <p>彼女はそう呟いて、それから自分が何を言ったのか理解した。</p>
+
+        <p>抜けた。氷床を、貫通した。予定より、三十九メートル手前で。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>汐里は、それから四十秒間、何もしなかった。</p>
+
+        <p>手順書はある。貫通時の対応は第八章にまとめられている。彼女は暗記していた。だが四十秒、彼女は椅子に座ったまま、圧力のグラフだけを見ていた。</p>
+
+        <p>グラフは、静かに、なだらかに、上がり続けていた。</p>
+
+        <p>その下にあるのは、岩盤ではなかった。水だった。</p>
+
+        <p>千五百万年前、夏の終わりに最後の光を失った水面。以後、一度も外気に触れていない水。氷の重さと、地球の内側から来るわずかな熱で、底だけが融けている。水温はマイナス二・六度。融点が圧力で下がっているから、凍らない。</p>
+
+        <p>そして掘削孔の中には、三千メートルぶんの掘削液が入っている。ケロシン系の、人工の液体。二万七千リットル。孔が氷の圧力で潰れないよう、十四年間、注ぎ続けてきた液体。</p>
+
+        <p>それが今、落ちていた。</p>
+
+        <p>千五百万年ぶんの、開けない夜のなかへ。</p>
+
+        <p>汐里は非常ブザーを押した。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>四人が制御室に集まるまで、七分かかった。</p>
+
+        <p>エレナが最初に来た。医務室のガウンのまま、髪も直さずに。次にハウン。それからチディが、なぜかポットを持って現れた。誰もそれを笑わなかったが、その二時間後、五人はそのコーヒーを全部飲んだ。</p>
+
+        <p>アンドレアスは、最後に来た。</p>
+
+        <p>彼はモニタの前に立ったまま、しばらく何も言わなかった。それから、順番にデータを呼び出した。</p>
+
+        <p>まず、掘削深度。三千四十一メートル。次に、二〇〇四年の氷厚推定値。</p>
+
+        <p class="doc">DOME-Ω RADAR SURVEY 2004
+PI: A. WERNER
+ICE THICKNESS  3,080 m ± 40 m
+CONFIDENCE     95 %</p>
+
+        <p>三千八十メートル、誤差プラスマイナス四十。</p>
+
+        <p>彼が二十二年前に、自分の手でアイスレーダーを引いて出した数字だった。橇に載せたアンテナを、雪上車で百二十キロ引き回して、三週間かけて出した。当時としては、最良の精度だった。</p>
+
+        <p>「わたしの誤差だ」と、彼は言った。</p>
+
+        <p>「アンドレアス、それは——」</p>
+
+        <p>「四十メートル。想定内の誤差だよ。誰の責任でもない」彼はモニタから目を離さずに続けた。「ただ、下側に四十だった。それだけだ。統計的には、ちょうど半分の確率で起きることが、起きた」</p>
+
+        <p>制御室の空気が、乾いた音を立てた。誰かの防寒着が擦れる音だ。</p>
+
+        <p>「破滅というのはね」アンドレアスは、誰にともなく言った。「隕石が降ってくることじゃない。二十二年前の自分の測定が、ちゃんと正しかった、と証明されることだ」</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>もうひとつ、失われたものがあった。</p>
+
+        <p>貫通の瞬間、孔の底にあったコアバレルには、深度三千三十五メートルから三千四十一メートルまでの氷が入っていたはずだった。最後の六メートル。</p>
+
+        <p>アンドレアスが三十年探してきた層は、そこにあった。</p>
+
+        <p>推定百十万年から百五十万年前。地球の気候の周期が乗り換えた時代。誰も見たことのない氷。</p>
+
+        <p>引き上げたバレルは、空だった。貫通の衝撃と、下から押し上げてきた湖水で、コアは砕けて孔内に散っていた。汐里が回収できたのは、握り拳ほどの破片が三つ。すべて、掘削液と湖水に浸っていた。</p>
+
+        <p>分析には使えない。汚染された試料は、科学的には存在しないのと同じだ。</p>
+
+        <p>アンドレアスは、その三つの破片を手袋の上に載せて、しばらく見ていた。それから、汐里に返した。</p>
+
+        <p>「保存しておいてくれ」と彼は言った。</p>
+
+        <p>「分析できませんよ」</p>
+
+        <p>「分析はしない。ただ、あったということにしておきたい」</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 第十二節 -->
+<section class="mv mv-fluid" data-depth="3041" data-year="2026" data-tick="十二 ／ 九時間">
+  <div class="wrap">
+    <article class="chap">
+      <header class="chap-head">
+        <span class="chap-d">MOVEMENT 12 ／ 03:40 – 12:40</span>
+        <h2 class="chap-t">九時間</h2>
+        <p class="chap-s">次の衛星窓まで</p>
+        <p class="chap-line">沈まない太陽 または 開けない夜</p>
+      </header>
+      <div class="prose">
+        <p>次の衛星の窓は、十二時五十一分だった。</p>
+
+        <p>九時間、五人は誰とも連絡が取れない。相談する相手も、指示を出してくれる上級者も、責任を分け合ってくれる組織も、地上には存在しない。</p>
+
+        <p>エレナは〇三時四十分に、こう宣言した。</p>
+
+        <p>「十二時四十分に、この部屋で決めます。それまで、各自で考えてください。話し合いは、そのときに一度だけ」</p>
+
+        <p>「議論しないんですか」とハウンが訊いた。</p>
+
+        <p>「します。ただし後で。先に議論すると、声の大きい人間の意見になります」エレナは言った。「九時間、ひとりで考えてください。それがこの基地でできる、いちばん公平なやり方です」</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p><b>汐里</b>は、掘削棟にいた。</p>
+
+        <p>孔内液の残量計を見ていた。二万七千リットルのうち、湖に落ちたのは推定で九百から千二百リットル。孔の底で、液は水より軽いから浮く。湖面に薄く広がっているはずだ。数値としては、四十平方キロメートルの湖に対して、ごく微量。</p>
+
+        <p>彼女はその「ごく微量」という言葉を、口の中で何度か転がした。</p>
+
+        <p>ごく微量。誰にも分からない。二十年後に誰かが同じ湖を調べたとしても、汚染源をここまで特定はできない。報告しなければ、この件はこの部屋の外に出ない。</p>
+
+        <p>そして彼女は、自分がそれを本気で検討していることに気づいた。</p>
+
+        <p>指が滑って消してしまったものが、この世にひとつある。それで十分だと思っていた。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p><b>ハウン</b>は、通信室にいた。</p>
+
+        <p>彼女は九時間、送信文の下書きを七回書いて、七回消した。八回目に、こう書いた。</p>
+
+        <p class="doc">DOME-Ω → HQ
+2026-07-12 03:22 LT / BOREHOLE Ω-1
+SUBGLACIAL BREACH CONFIRMED AT 3,041 m
+DRILL FLUID INGRESS ESTIMATED 900–1,200 L
+CREW SAFE. AWAITING —</p>
+
+        <p>そこで手が止まった。AWAITING の先が書けない。</p>
+
+        <p>指示を待つ、と書けば、判断を本部に渡せる。だが本部は現場を見ていない。九時間後に文字だけを読んで、政治と予算の言葉で答えてくるだろう。</p>
+
+        <p>彼女は、自分の仕事の本質について考えた。彼女の仕事は、伝えることだ。都合の悪い知らせを、正確に、遅らせずに、当人のところへ運ぶこと。</p>
+
+        <p>六月三日、彼女はその仕事を自分自身に対してだけ、十一週間サボった。</p>
+
+        <p>二度目はない、と彼女は思った。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p><b>エレナ</b>は、医務室にいた。</p>
+
+        <p>彼女は日誌を開き、その日の欄を書いた。五人ぶんの体温と血圧。全員、脈が速かった。彼女自身の脈も速かった。そして六人目の欄に、天気を書いた。</p>
+
+        <p class="doc">ВАЛЕНТИН СОКОЛОВ  34
+天候  快晴 −71.4℃ 風速 2.2 m/s
+南天に薄い極成層圏雲。</p>
+
+        <p>十一年前、彼女は「九割が選ぶ判断」を選んだ。そして人が死んだ。</p>
+
+        <p>今回、九割が選ぶ判断は明らかだった。孔を守る。データを守る。報告は、事態が整理されてからにする。誰も死なない。誰も傷つかない。三十年が守られる。</p>
+
+        <p>彼女はペンを置いて、両手で顔をこすった。</p>
+
+        <p>九割の側は、いつも、そんなに悪く見えないのだ。それがいちばん厄介なところだった。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p><b>チディ</b>は、厨房にいた。</p>
+
+        <p>九時間、彼は昼食を作っていた。作るしかなかった。他の四人と違って、彼にはこの問題について専門的に言えることが何ひとつない。氷のことも、湖のことも、条約のことも知らない。</p>
+
+        <p>だから彼は、豆を煮た。</p>
+
+        <p>煮ながら、ひとつだけ考えていた。あの下にいるかもしれないものは、千五百万年、誰にも会っていない。誰にも会わないまま、たぶんこれからも生きる。それは孤独だろうか、と彼は考えた。孤独というのは、他人を知っている人間の状態だ。知らなければ、孤独ですらない。</p>
+
+        <p>俺はどっちだ、と彼は思った。</p>
+
+        <p>豆は、ちょうど昼に炊き上がった。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p><b>アンドレアス</b>は、自室にいた。</p>
+
+        <p>彼は九時間のうち、最初の二時間を計算に使った。汚染の拡散モデル。湖の循環時間。掘削液の分解速度。全部やった。全部、意味のない精度だった。この湖について、彼らは何も知らない。何も知らないものを、彼は今日、汚した。</p>
+
+        <p>残りの七時間、彼は封筒を見ていた。</p>
+
+        <p>三十年、彼はひとつの問いに答えるために生きてきた。百五十万年前、地球に何が起きたのか。その答えは、今日、彼の手のひらの上で三つの破片になった。</p>
+
+        <p>答えの出ない問いを、彼はもうひとつ持っていた。ポケットの中に。</p>
+
+        <p>十時四十分、彼は封筒を開けた。手が震えていて、二回失敗した。三回目に、指ではなく、机の上のペーパーナイフを使った。</p>
+
+        <p>中には便箋が一枚と、写真が一枚。写真には、生後まもない赤ん坊が写っていた。目を閉じていて、顔が少し赤い。ヘルガの、四歳のときの写真に、少しだけ似ていた。</p>
+
+        <p class="doc">お父さんへ
+
+女の子でした。名前はエルケ。あなたのお母さんの名前です。
+
+返事はいりません。責めているのでもありません。
+ただ、知っていてほしかった。
+
+この子には、おじいちゃんは氷を掘る人だと言ってあります。
+それは本当のことなので。
+
+　　　　　　　　　　　　　　　　　　　　ヘルガ</p>
+
+        <p>六年前の手紙だった。つまり、その子はもう六歳になっている。</p>
+
+        <p>四歳の娘が、緑色の靴下を片方だけ履いて泣いていた。あれから三十年。</p>
+
+        <p>アンドレアスは、便箋を膝の上に置いたまま、しばらく動かなかった。それから立ち上がって、洗面所で顔を洗い、防寒着を着て、制御室へ向かった。</p>
+
+        <p>時刻は十二時三十四分だった。</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 第十三節 -->
+<section class="mv mv-fluid" data-depth="3041" data-year="2026" data-tick="十三 ／ 投票">
+  <div class="wrap">
+    <article class="chap">
+      <header class="chap-head">
+        <span class="chap-d">MOVEMENT 13 ／ 12:40 – 07.31</span>
+        <h2 class="chap-t">または</h2>
+        <p class="chap-s">投票、交信、そして十一日間</p>
+        <p class="chap-line">分岐は、たった三文字だった</p>
+      </header>
+      <div class="prose">
+        <p>エレナが、選択肢を三つ、ホワイトボードに書いた。</p>
+
+        <p><b>一、隠す。</b> 掘削液を可能なかぎり回収し、孔口をキャップし、貫通の記録を「深度到達」とだけ報告する。汚染は微量で、証明する手段は現状の科学では誰にもない。三十年ぶんのコアは無傷。来季も掘削は続けられる。誰も罰せられない。</p>
+
+        <p><b>二、報告し、孔は維持する。</b> 事実を伝え、判断を本部に委ねる。</p>
+
+        <p>ハウンが即座に首を振った。「条約事務局が孔の維持を認めることはありません。前例がない。それに、九時間かけて判断を他人に渡すのは、わたしたちがやってきたことと違うと思います」</p>
+
+        <p><b>三、自主的に封鎖する。</b> 熱水プラグで孔を全長にわたり永久に塞ぐ。孔は物理的に消滅する。基地は掘削拠点としての価値を失い、予算は来季で切れる。ここに残るのは、三千メートルの、誰も入れない氷の柱だけ。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>「三十年です」と汐里が言った。「三十年かけた穴を、自分たちで壊すんですか」</p>
+
+        <p>「壊すのは、もう終わってます」エレナが言った。「今日の三時二十二分に。あとは、それを認めるかどうかだけです」</p>
+
+        <p>「認めなくても、湖は元に戻らない」</p>
+
+        <p>「戻りません」</p>
+
+        <p>「じゃあ、認める意味は?」</p>
+
+        <p>誰も答えなかった。しばらくして、チディが口を開いた。</p>
+
+        <p>「あの下に、何かいるのか」</p>
+
+        <p>エレナは少し黙ってから、答えた。</p>
+
+        <p>「分かりません。いるかもしれないし、いないかもしれない。もしいたら、それは千五百万年、外の世界を一度も知らないまま生きてきた何かです。細菌かもしれない。目に見えないものかもしれない。研究者は、たぶん一生かけても答えを出せません」</p>
+
+        <p>「そいつらは、投票できないな」</p>
+
+        <p>「できません」</p>
+
+        <p>「じゃあ」チディは肩をすくめた。「俺たちがやるしかないだろ」</p>
+
+        <p>アンドレアスが、初めて口を開いた。</p>
+
+        <p>「ひとつ言っておく」彼は言った。「三を選べば、この基地は終わる。それから、わたしのやってきたことも終わる。三十年ぶんだ。だから、わたしのために三を選ばないでほしい。わたしのために一を選ぶのも、やめてほしい。わたしは、この決定の理由になりたくない」</p>
+
+        <p>「じゃあ何が理由になるんですか」ハウンが訊いた。</p>
+
+        <p>「下にあるものが、何も知らないということだ」アンドレアスは言った。「わたしは三十年、知りたくてここにいた。知りたいという気持ちは、どこまでも伸びる。止まらない。だから、外から止めるしかない」</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>エレナは投票を宣言した。無記名。紙。</p>
+
+        <p>彼女はコピー用紙を五枚に切り、テーブルに置いた。ボールペンは、掘削記録用の黒いやつが一本しかなかったので、順番に回した。</p>
+
+        <p>アンドレアスが最初に手を伸ばした。彼は数字を一つ書いて、二つに折って、真ん中に置いた。そして立ち上がりながら、誰にともなく言った。</p>
+
+        <p>「三十年かけて、わたしはここに穴を開けた。——今度は、三十年ぶんの蓋をする」</p>
+
+        <p>開票は、エレナが一枚ずつ開いて、声に出して読み上げた。</p>
+
+        <p class="vote">三 三 三 三 三</p>
+
+        <p>誰も、何も言わなかった。ハウンだけが、両手を口に当てて、声を出さずに泣いた。</p>
+
+        <p>エレナは五枚の紙をきちんと重ねて、日誌に挟んだ。それから、時計を見た。</p>
+
+        <p>「十二時四十九分。窓まで二分です。キムさん、送ってください」</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>返信が来るまでに、十九分かかった。窓の残りは四分だった。</p>
+
+        <p class="doc">HQ → DOME-Ω
+RECEIVED. STAND BY. DO NOT ACT.
+REPEAT: DO NOT COMMENCE SEALING.
+LEGAL AND SCIENTIFIC REVIEW REQUIRED.
+NEXT WINDOW 18:02.</p>
+
+        <p>十八時二分、本部の科学部門長が直接、音声で入ってきた。回線は悪く、二秒遅れて、金属質に割れた声が届いた。</p>
+
+        <p>「なぜ報告した」</p>
+
+        <p>それが第一声だった。エレナがマイクのスイッチを押した。</p>
+
+        <p>「事実だからです」</p>
+
+        <p>「事実の扱いには順序がある。まず精査だ。君たちは五人で、九時間で、三十年の国際事業の存廃を決めた。それを分かっているか」</p>
+
+        <p>「分かっています」</p>
+
+        <p>「封鎖を実施すれば、来季の予算は消える。関係四か国の分担金も、後続の若手のポストも、全部だ。ヴェルナー博士はそこにいるか」</p>
+
+        <p>アンドレアスがマイクの前に立った。「います」</p>
+
+        <p>「博士。三十年だぞ」</p>
+
+        <p>「三十年です」</p>
+
+        <p>「君の名前で出した論文が、四十七本ある。そのすべての根拠になった孔だ」</p>
+
+        <p>「四十九本です」アンドレアスは静かに訂正した。「そのうち二本は、共著者が先に亡くなりました」</p>
+
+        <p>回線が、しばらく沈黙した。</p>
+
+        <p>「……博士、率直に言う。君が反対してくれれば、この件はまだ動かせる」</p>
+
+        <p>「わたしが最初に三に投票しました」</p>
+
+        <p>「なぜだ」</p>
+
+        <p>アンドレアスは、少しのあいだ、答えなかった。それからこう言った。</p>
+
+        <p>「わたしがいちばん、掘りたかったからです」</p>
+
+        <p>「……意味が分からない」</p>
+
+        <p>「いちばん掘りたい人間が止めないと、止まらないからです」</p>
+
+        <p>回線が切れた。窓が閉じたのだ。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>七月十九日、五日間の応酬のあと、本部は封鎖を承認した。承認文書は事務的な三行で、そこには「現地隊の判断を追認する」とあった。</p>
+
+        <p>孔を塞ぐのに、十一日かかった。</p>
+
+        <p>まず掘削液を回収する。ポンプで吸い上げ、ドラム缶に移し、廃棄物として保管する。全部で二万五千三百リットル。残りは孔の壁に染みたまま、諦めるしかない。</p>
+
+        <p>次に、上部から順に熱水を注ぎ、凍結させ、区間ごとに氷の栓を作っていく。一区間は約百メートル。凍結の確認に半日。それを三十一回。</p>
+
+        <p>汐里は毎日、ウインチの前に立って、自分の作った機械が、自分の仕事を消していくのを見ていた。四日目の夜、彼女は制御室でひとり、大声で泣いた。誰も来なかった。翌朝、テーブルの上に、チディの焼いたパンが一つ置いてあった。何も書いていなかった。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>七日目の夜、汐里は最後の区間を凍らせる前に、四人を掘削棟に呼んだ。</p>
+
+        <p>孔口は、直径十三センチの、黒い円だった。そこから下へ、三千メートル。まだ最後の百メートルだけが、液体のまま残っていた。</p>
+
+        <p>「入れたいものがある人は、今のうちに」</p>
+
+        <p>誰も、それが何のことか訊かなかった。</p>
+
+        <p><b>アンドレアス</b>は便箋を四つに折って、孔の上でしばらく持っていた。写真は胸のポケットに入れ直した。「手紙は、いい。わたしはもう、読んだから」指を離した。紙は、三千メートルを、たぶん七分か八分かけて落ちていった。</p>
+
+        <p><b>ハウン</b>は父の腕時計を落とした。電池が切れていて、四時十七分で止まっていた。落ちていく音は、聞こえなかった。三千メートルは、音が返ってくるには深すぎる。彼女は縁に手をついたまま、韓国語で短く何か言った。誰も意味を訊かなかった。</p>
+
+        <p><b>エレナ</b>は、十一年分の医療日誌を持ってきた。厚さで言えば五冊分ある。孔の縁に置いて、しばらく手を離せずにいた。</p>
+
+        <p>「もう書かなくていいんですか」と汐里が訊いた。</p>
+
+        <p>「書きます。明日から、新しいノートに」</p>
+
+        <p>「じゃあ、なぜ捨てるんですか」</p>
+
+        <p>「捨てるんじゃありません」彼女は言った。「今日、わたしは初めて、九割の側から出ました。だからここまでの記録は、別の人間のものです」</p>
+
+        <p><b>汐里</b>は、ポケットから携帯電話を出した。着信履歴だけが残っている、あの電話だ。ここでは電波が入らない。十四年間、彼女はそれを持ち歩いていた。「拓海」と彼女は言った。声に出すのは、十四年ぶりだった。それだけ言って、落とした。</p>
+
+        <p><b>チディ</b>は、柄の焦げた木のスプーンを持っていた。</p>
+
+        <p>「母のだ」</p>
+
+        <p>「まだ、失ってないでしょう」ハウンが言った。</p>
+
+        <p>「そう。だから、先に預けとく」四人が彼を見た。「順番が来たとき、俺には埋める場所がないだろ。あんたらはみんな、ここに来て、埋めるものを持ってた。俺は持ってなかった。だから今のうちに、置き場所のほうを作っとく」</p>
+
+        <p>彼はスプーンを落とし、それから縁から一歩下がって、こう言った。</p>
+
+        <p>「これで俺も、お前らと同じだ」</p>
+
+        <p>汐里は、そのとき初めて、彼のために泣いた。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>十一日目の午後、最後の熱水を注いだ。</p>
+
+        <p>凍結を確認し、掘削棟のクレーンを止め、ウインチのブレーキをかけ、電源を落とした。制御盤のランプが、上から順に消えていった。汐里は最後の一つを、自分の手で切った。</p>
+
+        <p>三千四十一メートルの穴は、なくなった。</p>
+
+        <p>雪面には、直径三十センチほどの、わずかな窪みが残っただけだった。年間三センチの堆積で、十年もすれば分からなくなる。百年で、地図からも消える。</p>
+
+        <p>いつか誰かが掘り出すかもしれない。誰も掘り出さないかもしれない。</p>
+
+        <p>どちらでもいい、と汐里は思った。それは、忘れられることとは違う。</p>
+
+        <p>——この一文が、この物語で唯一、はっきりと間違っている箇所である。</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 第十四節 -->
+<section class="mv mv-night" data-depth="0" data-year="2026" data-tick="十四 ／ 日の出">
+  <div class="wrap">
+    <article class="chap">
+      <header class="chap-head">
+        <span class="chap-d">MOVEMENT 14 ／ DEPTH 0 m ／ 2026.08.22</span>
+        <h2 class="chap-t">一分三十二秒</h2>
+        <p class="chap-s">極夜 137日目 ／ 日の出</p>
+        <p class="chap-line">開けない夜が、明けた——ように見えた</p>
+      </header>
+      <div class="prose">
+        <p>その日、太陽が戻ってきた。</p>
+
+        <p>百三十七日ぶりだった。地平線の上に、一分三十二秒だけ。オレンジというより、もっと薄い、桃の内側みたいな色で。</p>
+
+        <p>五人は防寒具を着て外に出た。マイナス六十八度。息が音を立てて凍る。ダイヤモンドダストが、太陽の側にだけ、細い柱を立てた。</p>
+
+        <p>誰も喋らなかった。喋れば、その一分三十二秒が減る。</p>
+
+        <p>沈むとき、光は上から順に消えた。まず地面が暗くなり、次に人の顔が暗くなり、最後にアンテナの先端が光っていた。</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p><b>チディ</b>が先に基地に戻って、朝食を作った。パンケーキだった。理由を訊くと「一番みんなが多く食べるから」と答えた。その日の朝食は四十分かかった。それまでのどの朝食よりも長かった。</p>
+
+        <p><b>ハウン</b>は通信室に行き、その日の交信で、初めて父の名前を口に出した。「私事ですが」と前置きして、それから事務的な声で、六月三日に父キム・ヨンスが死亡したこと、越冬中のため葬儀に参列できなかったこと、以上を第三十次越冬隊の公式記録に残してほしいことを、順番に述べた。声は最後まで震えなかった。回線の向こうで、誰かが「お悔やみ申し上げます」と言った。それだけだった。それで十分だった。記録に残る、というのは、そういうことだ。</p>
+
+        <p><b>エレナ</b>は、新しいノートの一ページ目に、六人分の欄を作った。六人目には、こう書いた。</p>
+
+        <p class="doc">ВАЛЕНТИН СОКОЛОВ  34
+天候  日の出 1分32秒 −68.0℃
+——本日、太陽を見た。</p>
+
+        <p><b>アンドレアス</b>は、食堂の隅で汐里を呼び止めた。手には新しい便箋を持っていた。基地の備品の、罫線が薄い青のやつ。</p>
+
+        <p>「手伝ってくれないか」</p>
+
+        <p>「何をですか」</p>
+
+        <p>「返事を書く。六年遅れの返事だ。書き出しが、どうしても思いつかない」</p>
+
+        <p>汐里は椅子を引いて、彼の隣に座った。</p>
+
+        <p>「氷を掘る人だって、言ってあるんですよね」</p>
+
+        <p>「そう書いてあった」</p>
+
+        <p>「じゃあ、それを書けばいいんじゃないですか。掘るのをやめました、って」</p>
+
+        <p>アンドレアスは、ペンのキャップを開けた。開けたまま、しばらく便箋を見ていた。それから書きはじめた。汐里は、彼の手元を見ないようにして、隣に座っていた。</p>
+
+        <p>窓の外では、また夜が始まっていた。だが今度の夜は、明ける夜だった。</p>
+
+        <p>五人はその冬、自分たちにできる最善を尽くした。全員が一致した。三十年を捨てた。誰も間違えなかった。</p>
+
+        <p>それが、この物語でいちばん残酷な事実である。</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 第十五節 -->
+<section class="mv mv-tar inter" data-depth="0" data-year="2033–2049" data-tick="十五 ／ その後">
+  <p class="inter-when">2033 – 2049</p>
+  <p class="inter-where">五人のその後 ／ 順番</p>
+  <p class="refrain">
+    誰もいなくなった白銀の大地<br>
+    すべてが凍てついたままの空気<br>
+    沈まない太陽<br>
+    <em>または</em>
+    まだ誰も気づいていない夜
+  </p>
+  <div class="inter-body">
+    <p>第三十次隊が、最後の越冬隊になった。二〇二九年に建屋は解体・搬出され、条約の規定どおり、雪面には何も残されなかった。</p>
+    <p><b>チディ・オコンクウォ</b>の順番は、二〇三三年に来た。母アダエゼが、ラゴスの自宅で、八十一歳で死んだ。彼はその報せを、ノルウェーの洋上基地の厨房で受け取った。厨房には他に三人いて、全員が彼にノックをした。三人とも、南極の話は知らなかった。彼は葬儀に間に合った。飛行機があったからだ。それが、あの冬とのいちばん大きな違いだった。</p>
+    <p><b>アンドレアス・ヴェルナー</b>は、二〇三四年に死んだ。七十一歳。ハンブルクの、娘の家から二駅の場所にあるアパートで。最後の八年で、彼は孫のエルケに二度会っている。二度とも、氷の話はしなかった。パンケーキの焼き方の話をした。南極で覚えた、ナイジェリア人の同僚に習ったのだと。<br>彼の死亡記事は、専門誌に四百語載った。そこには「ドームΩ計画を自らの判断で終結させた」と書かれていた。四百語のうち、その一文がいちばん短かった。</p>
+    <p><b>エレナ・パヴロヴナ</b>は、二〇四一年、モスクワ郊外の施設に入った。六十三歳。診断は前頭側頭型認知症。言葉が先に壊れる型だった。<br>彼女は最後まで、毎朝ノートを書き続けた。名前も、日付も、途中から書けなくなった。それでも六行の欄だけは、罫線の上に正確に引かれていた。看護師は、そのノートが何なのかを最後まで知らなかった。二〇四九年に死去。</p>
+    <p><b>キム・ハウン</b>は、二〇二八年に極地研を辞めた。理由を書いた文書は残っていない。<br>釜山に戻って、父の船具店を継いだ。ロープと金具を売る仕事だ。彼女はその後、二度と衛星回線の仕事に就かなかった。訃報を最初に読む仕事に、もう就きたくなかったのだと、一度だけ誰かに話したという記録がある。</p>
+    <p><b>本橋汐里</b>は、掘り続けた。</p>
+    <p>二〇三〇年、彼女は別の国の深層掘削計画に、掘削技師として雇われた。西南極の、氷厚二千二百メートルの地点。契約書には、氷床下水環境に到達しないことが明記されていた。彼女はその条項を、面接の場で三回読んだという。</p>
+    <p>やめられなかったのだ。それだけの話だった。彼女は二〇四七年まで現場に立ち、六十二歳で引退し、二〇五三年に死んだ。</p>
+    <p>五人とも、自分たちの決断が正しかったと信じたまま死んだ。</p>
+    <p>これは、この物語における唯一の救いであり、同時に、いちばんたちの悪い部分でもある。</p>
+  </div>
+</section>
+
+<!-- 第十六節 -->
+<section class="mv mv-tar" data-depth="3041" data-year="2056" data-tick="十六 ／ 排水網">
+  <div class="wide">
+    <article class="chap">
+      <header class="chap-head">
+        <span class="chap-d">MOVEMENT 16 ／ 2056 – 2113</span>
+        <h2 class="chap-t">エルケ</h2>
+        <p class="chap-s">三十年後、掘らずに見る</p>
+        <p class="chap-line">誰もいない白銀の大地に、答えが出る</p>
+      </header>
+      <div class="prose">
+        <p>二〇五六年一月、エルケ・ヴェルナーは三十六歳で、ドームΩの跡地に立っていた。</p>
+
+        <p>基地はもうない。あるのは白い、まっすぐな地平線だけだ。</p>
+
+        <p>彼女は氷床学者になっていた。専門は、氷床下環境の非接触探査。掘らずに、電波と地震波と重力だけで、氷の下を見る技術。この三十年で、その分野は大きく進んだ。掘らない、という選択肢が、初めて現実的な選択肢になった。</p>
+
+        <p>彼女がこの分野を選んだ理由を、同僚は誰も正確には知らない。祖父の手紙のことは、誰にも話していないからだ。</p>
+
+        <p>その手紙は、二〇二六年十二月に届いた。彼女が六歳のときだ。読めなかったので、母が読んでくれた。祖父はまず、六年遅れたことを詫び、それから、自分がその冬に何をしたかを、六歳にも分かる言葉で書いていた。</p>
+
+        <p class="doc">おじいちゃんは、氷を掘る人でした。三十年、掘りました。
+氷のずっと下に、だれも見たことのない水がありました。
+おじいちゃんはそれが見たかったのですが、
+見るためには、その水をよごさなければなりませんでした。
+それで、掘るのをやめて、穴をふさぎました。
+
+いま、おじいちゃんは、氷を掘らない人です。</p>
+
+        <p>六歳の彼女は、母にこう訊いたのを覚えている。「じゃあ、おじいちゃんは今、何する人?」</p>
+
+        <p>母は少し考えて、こう答えた。「手紙を書く人じゃない?」</p>
+
+        <p class="brk">◦ ◦ ◦</p>
+
+        <p>二〇五六年一月十九日、彼女の観測隊は、この地点を含む半径六百キロの氷床底面の三次元マップを完成させた。</p>
+
+        <p>掘らずに、である。</p>
+
+        <p>結果を最初に見たのは、彼女ではなく、解析担当の大学院生だった。彼はデータを二回走らせ直し、それから、テントの外にいるエルケを呼びに行った。</p>
+
+        <p>Ω湖は、孤立していなかった。</p>
+      </div>
+    </article>
+
+    <div class="fig fig-scroll" style="margin-top:36px">
+      <svg viewBox="0 0 940 480" role="img" aria-label="Ω湖から海までの氷床下排水網の図">
+        <rect width="940" height="480" fill="#0A0703"/>
+        <text x="24" y="36" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6A5C46" letter-spacing="2.5">FIG. 06 ／ SUBGLACIAL DRAINAGE NETWORK ／ SURVEYED 2056</text>
+        <line x1="24" y1="50" x2="916" y2="50" stroke="#3A2F1E"/>
+
+        <path d="M110,200 C210,206 250,254 330,258 C420,262 452,214 540,220 C630,226 660,286 748,292 C812,296 848,300 880,300"
+              fill="none" stroke="#9B7530" stroke-width="2.4" stroke-dasharray="1 0"/>
+        <path d="M110,200 C210,206 250,254 330,258 C420,262 452,214 540,220 C630,226 660,286 748,292 C812,296 848,300 880,300"
+              fill="none" stroke="#D9A24A" stroke-width="1" opacity=".55"/>
+
+        <g font-family="Zen Kaku Gothic New, sans-serif">
+          <circle cx="110" cy="200" r="26" fill="#2E8C8C" opacity=".25"/>
+          <circle cx="110" cy="200" r="14" fill="#2E8C8C" opacity=".5"/>
+          <circle cx="110" cy="200" r="6" fill="#D9A24A"/>
+          <text x="110" y="156" text-anchor="middle" font-size="14" font-weight="700" fill="#E6DCCB">Ω 湖</text>
+          <text x="110" y="174" text-anchor="middle" font-size="10.5" fill="#8A7A5E">2026.07.12 汚染</text>
+          <text x="110" y="248" text-anchor="middle" font-size="10" fill="#6A5C46">40 km² ／ 隔離1,500万年</text>
+
+          <circle cx="330" cy="258" r="9" fill="none" stroke="#D9A24A" stroke-width="1.6"/>
+          <circle cx="330" cy="258" r="3.5" fill="#D9A24A"/>
+          <text x="330" y="290" text-anchor="middle" font-size="11" fill="#A9997F">下流湖群 A（4湖）</text>
+          <text x="330" y="306" text-anchor="middle" font-size="10" fill="#6A5C46">到達 2031年頃</text>
+
+          <circle cx="540" cy="220" r="9" fill="none" stroke="#D9A24A" stroke-width="1.6"/>
+          <circle cx="540" cy="220" r="3.5" fill="#D9A24A"/>
+          <text x="540" y="190" text-anchor="middle" font-size="11" fill="#A9997F">下流湖群 B（5湖）</text>
+          <text x="540" y="174" text-anchor="middle" font-size="10" fill="#6A5C46">到達 2038年頃</text>
+
+          <circle cx="748" cy="292" r="9" fill="none" stroke="#D9A24A" stroke-width="1.6"/>
+          <circle cx="748" cy="292" r="3.5" fill="#D9A24A"/>
+          <text x="748" y="324" text-anchor="middle" font-size="11" fill="#A9997F">下流湖群 C（2湖）</text>
+          <text x="748" y="340" text-anchor="middle" font-size="10" fill="#6A5C46">到達 2049年頃</text>
+
+          <rect x="880" y="120" width="60" height="360" fill="#123040" opacity=".8"/>
+          <text x="910" y="300" text-anchor="middle" font-size="12" fill="#7FB6D0" transform="rotate(90 910 300)">南 極 海</text>
+          <circle cx="880" cy="300" r="7" fill="#D9A24A"/>
+          <text x="866" y="380" text-anchor="end" font-size="11" fill="#A9997F">氷縁部より流出</text>
+          <text x="866" y="396" text-anchor="end" font-size="10" fill="#6A5C46">到達 2054年頃</text>
+        </g>
+
+        <g stroke="#3A2F1E">
+          <line x1="110" y1="430" x2="880" y2="430"/>
+          <line x1="110" y1="424" x2="110" y2="436"/><line x1="880" y1="424" x2="880" y2="436"/>
+        </g>
+        <text x="495" y="422" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="#A9997F">812 km ／ 28 years</text>
+        <text x="495" y="452" text-anchor="middle" font-family="Zen Kaku Gothic New, sans-serif" font-size="11" fill="#6A5C46">封鎖作業（2026.07.20–31）による底面水圧擾乱が、排水を開始させた</text>
+        <text x="916" y="36" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6A5C46">FICTIONAL</text>
+      </svg>
+    </div>
+    <p class="cap" style="color:#8A7A5E"><b>図06.</b> Ω湖は独立した水塊ではなく、氷床下の排水網の上流端にあった。<b>そして排水を始動させたのは、封鎖作業そのものだった。</b>三十一区間にわたる熱水注入が底面の水圧平衡を崩し、二〇二六年八月、湖は下流へ排水を開始した。五人が日の出を見ていたその朝には、もう始まっていた。</p>
+
+    <div class="prose" style="max-width:38em; margin:40px auto 0">
+      <p>掘削液は、二十八年かけて、十一の湖を順に通り、二〇五四年に海へ出た。</p>
+
+      <p>もはや検出できないほど薄まっていた。生態系への影響は、測定不能だった。「影響がなかった」のではない。<b>測る方法がなかった</b>のだ。十一の湖は、汚染される前の姿を誰にも記録されないまま、汚染された。比較する対照がない以上、何が失われたかを言うことは、原理的にできない。</p>
+
+      <p>エルケは、そのマップを三日間、誰にも見せなかった。</p>
+
+      <p>四日目に、彼女は公表した。祖父の名前は論文に出さなかった。出す必要がなかった。掘削孔Ω-1の座標を書けば、誰でも分かる。</p>
+
+      <p class="brk">◦ ◦ ◦</p>
+
+      <p>反応は、彼女が想定したどれとも違った。</p>
+
+      <p>批判は来なかった。同情も来なかった。来たのは、引用だった。</p>
+
+      <p>二〇六〇年代に入ると、彼女のマップは、まったく別の文脈で引かれるようになった。氷床下水環境は独立した系ではなく相互に連結した系であり、したがって「隔離された原始環境」という前提そのものが成立しない——そういう論旨で。</p>
+
+      <p>前提が成立しないなら、それを守るための規制も、根拠を失う。</p>
+
+      <p>エルケは何度も反論を書いた。連結しているからこそ一点の汚染が全体に及ぶのだ、と。彼女の論理のほうが正しかった。ただ、彼女の論理は「だから何もするな」と言うもので、相手の論理は「だからやってよい」と言うものだった。</p>
+
+      <p>そして八十七年のあいだ、後者のほうが、常に多くの署名を集めた。</p>
+
+      <p class="brk">◦ ◦ ◦</p>
+
+      <p>二〇一三年八月、南極条約協議国会議は、氷床下水環境への直接接触に関する制限条項を削除した。</p>
+
+      <p>訂正する。二一一三年八月である。</p>
+
+      <p>決議文の脚注に、根拠文献が七本挙げられている。三番目が、エルケ・ヴェルナー（二〇五六）である。</p>
+
+      <p>彼女はその年に生きていない。二〇九一年に死んでいる。七十一歳。祖父と同じ歳だった。</p>
+
+      <p class="brk">◦ ◦ ◦</p>
+
+      <p>翌年、新しい掘削が始まった。</p>
+
+      <p>技術は進んでいた。清浄掘削。無菌のドリル。汚染をゼロにできると彼らは言った。実際、かなり小さくはできた。</p>
+
+      <p>最初の孔が下ろされた地点は、ドームΩから四十キロ北だった。同じ排水網の、同じ上流端である。</p>
+
+      <p>誰も、そこに五人の人間が何かを埋めたことを知らない。記録には残っている。読まれていないだけだ。</p>
+
+      <p>読まれていない記録と、存在しない記録は、実用上、区別できない。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 第十七節 -->
+<section class="mv mv-tar inter" data-depth="0" data-year="+15,000,000" data-tick="十七 ／ +15Ma">
+  <p class="inter-when">15,000,000 YEARS AFTER</p>
+  <p class="inter-where">かつてドームΩ基地があった座標 ／ 黒い海</p>
+  <p class="refrain">
+    誰もいない黒い海<br>
+    すべてが溶けきった空気<br>
+    沈まない太陽<br>
+    <em>または</em>
+    明けなかった夜
+  </p>
+  <div class="inter-body">
+    <p>氷床は、とうになくなっている。</p>
+    <p>南緯七十七度四十一分、東経四十一度十八分。かつて標高三千八百十メートルだった地点は、いま水深四百メートルの海底である。基盤岩が氷の重みから解放され、ゆっくり隆起し、それ以上に海面が上がった。</p>
+    <p>そこには堆積物がある。厚さ二十メートルほどの、灰色の泥だ。その中に、鉄とガラスとプラスチックの、区別のつかない痕跡が薄く一層、混ざっている。厚さにして〇・二ミリ。</p>
+    <p>携帯電話も、便箋も、腕時計も、五冊の日誌も、木のスプーンも、その〇・二ミリの一部である。互いに区別はつかない。順番に落とされたことも、それぞれに意味があったことも、層の中では何ひとつ表現されていない。</p>
+    <p>湖はない。氷がなければ、氷床底面湖は存在できない。千五百万年ぶんの隔離も、二十八年ぶんの汚染も、どちらも同じ理由で消えた。</p>
+    <p>この星に、そのことを問題だと思う存在は、いない。</p>
+    <p class="brk">◦</p>
+    <p>本橋汐里は、二〇二六年七月三十一日に、こう思った。</p>
+    <p>——いつか誰かが掘り出すかもしれない。誰も掘り出さないかもしれない。どちらでもいい。それは、忘れられることとは違う。</p>
+    <p>違わなかった。</p>
+    <p>まったく同じことだった。彼女はそれを知らずに死に、知らずに済んだという点においてのみ、幸運だった。</p>
+    <p class="brk">◦</p>
+    <p>海の上では、太陽が沈まない季節が来ている。この緯度では、いまも夏には日が沈まず、冬には日が昇らない。それだけは千五百万年、変わっていない。地球の傾きは、人間よりずっと長持ちした。</p>
+    <p>白銀の大地は、もうない。</p>
+    <p>凍てつく空気も、もうない。</p>
+    <p>沈まない太陽は、まだある。</p>
+    <p>または。</p>
+    <p>——分岐は、とうに閉じた。</p>
+    <p>誰も選ばなかったからではない。五人は、選んだ。九時間かけて、ひとりずつ考えて、無記名で、全員一致で選んだ。あれは人間にできる、たぶん最良の選び方だった。</p>
+    <p>そして、何ひとつ変わらなかった。</p>
+    <p>それでいい、と誰かが思った。</p>
+    <p>思っただけだった。</p>
+    <p class="end" style="text-align:center">深度三千四十一メートル ／ 完</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p><b>深度三千四十一メートル</b><br>ドームΩ基地 第三十次越冬記録</p>
+      <p>全17節／設定資料・地図・断面図・人物相関図・時空図・排水網図</p>
+    </div>
+    <div>
+      <p>ドームΩ基地、Ω湖、登場人物はすべて架空です。<br>氷床コアの原理、氷床下水環境の連結性、南極条約体制下の環境保護枠組みは実在の科学と制度に基づきます。</p>
+      <p style="color:#5C5240">FICTION ／ 1,500万年前 – 1,500万年後</p>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<script>
+(function(){
+  var read=document.getElementById('read'), read2=document.getElementById('read2');
+  var yr=document.getElementById('year'), yr2=document.getElementById('year2');
+  var fill=document.getElementById('fill'), fill2=document.getElementById('fill2');
+  var dot=document.getElementById('dot'), scale=document.getElementById('scale');
+  var nodes=Array.prototype.slice.call(document.querySelectorAll('[data-depth]'));
+  function top(el){ return el.getBoundingClientRect().top + window.pageYOffset; }
+
+  function buildTicks(){
+    Array.prototype.slice.call(scale.querySelectorAll('.tick')).forEach(function(t){ t.parentNode.removeChild(t); });
+    var docH=document.documentElement.scrollHeight - window.innerHeight;
+    if(docH<=0) return;
+    nodes.forEach(function(el,i){
+      var label=el.getAttribute('data-tick'); if(!label) return;
+      if(!el.id) el.id='sec-'+i;
+      var pct=Math.min(.985, Math.max(0,(top(el)-8)/docH));
+      var b=document.createElement('button');
+      b.className='tick'+(String(el.getAttribute('data-year')||'').indexOf('-')===0||/^\+|^20[3-9]|^21/.test(el.getAttribute('data-year')||'')?' deep':'');
+      b.style.top=(pct*100)+'%';
+      b.setAttribute('aria-label',label+'へ移動');
+      b.innerHTML='<i></i><b>'+label+'</b>';
+      b.addEventListener('click',function(){ document.getElementById(el.id).scrollIntoView({behavior:'smooth',block:'start'}); });
+      scale.appendChild(b);
+    });
+  }
+
+  function update(){
+    var y=window.pageYOffset + window.innerHeight*0.4;
+    var d=nodes.length?+nodes[0].getAttribute('data-depth'):0;
+    var yearTxt=nodes.length?(nodes[0].getAttribute('data-year')||'2026'):'2026';
+    for(var i=0;i<nodes.length;i++){
+      var p=top(nodes[i]);
+      if(y>=p){
+        var a=+nodes[i].getAttribute('data-depth');
+        yearTxt=nodes[i].getAttribute('data-year')||yearTxt;
+        var nx=nodes[i+1];
+        if(!nx){ d=a; }
+        else{
+          var pb=top(nx), bd=+nx.getAttribute('data-depth');
+          var t=pb>p?(y-p)/(pb-p):1; t=Math.min(1,Math.max(0,t));
+          d=a+(bd-a)*t;
+        }
+      }
+    }
+    var txt=Math.round(d).toLocaleString('en-US');
+    if(read) read.textContent=txt;
+    if(read2) read2.textContent=txt;
+    if(yr) yr.textContent=yearTxt;
+    if(yr2) yr2.textContent=yearTxt;
+    var docH=document.documentElement.scrollHeight-window.innerHeight;
+    var prog=docH>0?Math.min(1,Math.max(0,window.pageYOffset/docH)):0;
+    if(fill) fill.style.height=(prog*100)+'%';
+    if(fill2) fill2.style.width=(prog*100)+'%';
+    if(dot) dot.style.top=(prog*100)+'%';
+  }
+
+  var raf=null;
+  function onScroll(){ if(raf) return; raf=requestAnimationFrame(function(){ raf=null; update(); }); }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',function(){ buildTicks(); update(); });
+  window.addEventListener('load',function(){ buildTicks(); update(); });
+  buildTicks(); update();
+})();
+</script>
+</body>
+</html>
